@@ -5,7 +5,8 @@ import org.springframework.dao.DataIntegrityViolationException
 class PackageController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
-
+	def UPSService = new UPSService()
+	
     def index() {
         redirect(action: "list", params: params)
     }

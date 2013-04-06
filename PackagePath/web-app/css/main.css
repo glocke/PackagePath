@@ -1,0 +1,7 @@
+.brand-blue {
+	color: #3d79d0;
+}
+
+.brand-blue .active > a, .brand-blue .active > a:hover {
+    background-color: #3d79d0;
+}
