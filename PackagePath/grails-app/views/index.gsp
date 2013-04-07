@@ -3,26 +3,43 @@
 	<head>
 		<meta name="layout" content="main"/>
 		<title>Welcome to PackagePath</title>
-		
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
 		<script>
 			function initialize() {
-  				var mapOptions = {
-    				zoom: 8,
-    				center: new google.maps.LatLng(-34.397, 150.644),
-    				mapTypeId: google.maps.MapTypeId.ROADMAP
-  				};
 
-  				var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+ 		        var map_style = [
+ 		         	{
+						"featureType": "water",
+ 						"stylers": [
+							{ "lightness": -39 }
+ 						]
+ 					},
+ 					{
+ 						"featureType": "landscape",
+ 					    "stylers": [
+							{ "lightness": 40 }
+ 						]
+ 					},
+ 					{
+ 					    "featureType": "road",
+ 					    "stylers": [
+ 							{ "visibility": "off" }
+ 						]
+ 					}
+				];
+
+ 		       	var opt = {
+ 		       		mapTypeId: google.maps.MapTypeId.ROADMAP,
+ 					center: new google.maps.LatLng(-34.397, 150.644),
+ 					styles: map_style,
+ 					mapTypeControl: false,
+ 		            zoom: 8
+				};
+ 	 		          
+				var map = new google.maps.Map(document.getElementById('map'), opt);        
 			}
 
-			function loadScript() {
-  				var script = document.createElement('script');
-  				script.type = 'text/javascript';
-  				script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=initialize';
-  				document.body.appendChild(script);
-			}
-
-			window.onload = loadScript;
+			google.maps.event.addDomListener(window, 'load', initialize);
     	</script>
     	
     	<style type="text/css">
