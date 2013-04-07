@@ -3,6 +3,37 @@
 	<head>
 		<meta name="layout" content="main"/>
 		<title>Welcome to PackagePath</title>
+		
+		<script>
+			function initialize() {
+  				var mapOptions = {
+    				zoom: 8,
+    				center: new google.maps.LatLng(-34.397, 150.644),
+    				mapTypeId: google.maps.MapTypeId.ROADMAP
+  				};
+
+  				var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+			}
+
+			function loadScript() {
+  				var script = document.createElement('script');
+  				script.type = 'text/javascript';
+  				script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=initialize';
+  				document.body.appendChild(script);
+			}
+
+			window.onload = loadScript;
+    	</script>
+    	
+    	<style type="text/css">
+    		.map-section{
+    			height: 400px;
+    			width: 100%;
+    		}
+    		.map-canvas{
+    			height: 100%;
+    		}
+    	</style>
 	</head>
 	<body>
 		<div class="navbar navbar-inverse navbar-fixed-top">
@@ -24,12 +55,12 @@
 	        </div>
 	      </div>
 	    </div>
-	
+		
 	    <div class="container" style="margin-top:50px;">
-	
-	      <h1>Bootstrap starter template</h1>
-	      <p>Use this document as a way to quick start any new project.<br> All you get is this message and a barebones HTML document.</p>
-	
+			<section class="calendar"></section>
+			<section class="map-section">
+	     		<div id="map" class="map-canvas"></div>
+	     	</section>
 	    </div>
 	</body>
 </html>
