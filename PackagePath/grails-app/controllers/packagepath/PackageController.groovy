@@ -5,13 +5,15 @@ import org.springframework.dao.DataIntegrityViolationException
 class PackageController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
-	def UPSService = new UPSService()
 	
     def index() {
         redirect(action: "list", params: params)
     }
 
     def list(Integer max) {
+		def upsService = new UPSService()
+		upsService.getTrackingInfo('1Z12345E1512345676')
+		
         params.max = Math.min(max ?: 10, 100)
         [packageInstanceList: Package.list(params), packageInstanceTotal: Package.count()]
     }
