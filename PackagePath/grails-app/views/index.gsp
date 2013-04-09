@@ -49,7 +49,28 @@
 			}
     		.map-section{
     			height: 400px;
+    			position: relative;
     			width: 100%;
+    		}
+    		.map-section-filter{
+    			background: none repeat scroll 0 0 #333333;
+    			height: 40px;
+    			left: 0;
+    			opacity: 0.6;
+    			position: absolute;
+    			text-align: center;
+    			top: 0;
+    			width: 100%;
+    			z-index: 1;
+    			-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+    		}
+    		.map-section-filter-buttons{
+    			left: 30%;
+    			position: absolute;
+    			text-align: center;
+    			top: 8px;
+    			width: 40%;
+    			z-index: 2;
     		}
     		.map-canvas{
     			height: 100%;
@@ -87,9 +108,38 @@
     		}
     		.calendar-day-title{
     			color: rgb(85, 85, 85);
-    			display: inline-block; 
     			font-size: 11px; 
     			margin: 15px 0 0; 
+    		}
+    		.calendar-day-arrival-content{
+    			margin-top: 15px;
+    		}
+    		.calendar-day-ul{
+    			margin: 0;
+    		}
+    		.calendar-day-ul li{
+    			display: inline;
+    			list-style:none;
+    		}
+    		.calendar-day-arrival{
+				-moz-border-radius: 15px;
+				-webkit-border-radius: 15px;
+				border-radius: 15px;
+				box-shadow: 0 3px 10px #333333;
+    			display: block;
+    			height: 30px;
+    			margin-left: 15%;
+    			width: 30px;
+    		}
+    		.fedex-brand-background{
+    			background: #5c3977; /* Old browsers */
+				background: -moz-linear-gradient(top, #5c3977 0%, #6f3891 36%, #551a60 100%); /* FF3.6+ */
+				background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#5c3977), color-stop(36%,#6f3891), color-stop(100%,#551a60)); /* Chrome,Safari4+ */
+				background: -webkit-linear-gradient(top, #5c3977 0%,#6f3891 36%,#551a60 100%); /* Chrome10+,Safari5.1+ */
+				background: -o-linear-gradient(top, #5c3977 0%,#6f3891 36%,#551a60 100%); /* Opera 11.10+ */
+				background: -ms-linear-gradient(top, #5c3977 0%,#6f3891 36%,#551a60 100%); /* IE10+ */
+				background: linear-gradient(to bottom, #5c3977 0%,#6f3891 36%,#551a60 100%); /* W3C */
+				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5c3977', endColorstr='#551a60',GradientType=0 ); /* IE6-9 */
     		}
     	</style>
 	</head>
@@ -119,32 +169,44 @@
 				<ul class="calendar-ul">
 					<li>
 						<div class="calendar-day-content calendar-day-first calendar-day-content-today">
-							<span class="calendar-day-title">APRIL 7</span>
+							<div class="calendar-day-title">APRIL 7</div>
 						</div>
 					</li>
 					<li>	
 						<div class="calendar-day-content">
-							<span class="calendar-day-title">APRIL 8</span>
+							<div class="calendar-day-title">APRIL 8</div>
+							<div class="calendar-day-arrival-content">
+								<ul class="calendar-day-ul">
+									<li><div class="calendar-day-arrival fedex-brand-background"></div></li>
+								</ul>
+							</div>
 						</div>
 					</li>
 					<li>
 						<div class="calendar-day-content">
-							<span class="calendar-day-title">APRIL 9</span>
+							<div class="calendar-day-title">APRIL 9</div>
 						</div>
 					</li>
 					<li>
 						<div class="calendar-day-content">
-							<span class="calendar-day-title">APRIL 10</span>
+							<div class="calendar-day-title">APRIL 10</div>
 						</div>
 					</li>
 					<li>
 						<div class="calendar-day-content">
-							<span class="calendar-day-title"">APRIL 11</span>
+							<div class="calendar-day-title"">APRIL 11</div>
 						</div>
 					</li>
 				</ul>
 			</section>
 			<section class="map-section">
+				<div class="map-section-filter"></div>
+				<div class="map-section-filter-buttons">
+					<div class="btn-group">
+						<button class="btn btn-mini">Inbound</button>
+						<button class="btn btn-mini">Outbound</button>
+					</div>
+				</div>
 	     		<div id="map" class="map-canvas"></div>
 	     	</section>
 	    </div>
