@@ -11,13 +11,13 @@
  		         	{
 						"featureType": "water",
  						"stylers": [
-							{ "lightness": -39 }
+							{ "lightness": -45 }
  						]
  					},
  					{
  						"featureType": "landscape",
  					    "stylers": [
-							{ "lightness": 40 }
+							{ "lightness": 3 }
  						]
  					},
  					{
@@ -30,13 +30,27 @@
 
  		       	var opt = {
  		       		mapTypeId: google.maps.MapTypeId.ROADMAP,
- 					center: new google.maps.LatLng(-34.397, 150.644),
+ 					center: new google.maps.LatLng(43.0731, -89.4011),
  					styles: map_style,
  					mapTypeControl: false,
- 		            zoom: 8
+ 		            zoom: 5
 				};
  	 		          
-				var map = new google.maps.Map(document.getElementById('map'), opt);        
+				var map = new google.maps.Map(document.getElementById('map'), opt);
+
+				var flightPlanCoordinates = [
+					new google.maps.LatLng(35.65, -105.15),
+					new google.maps.LatLng(37.77, -99.97),
+				    new google.maps.LatLng(41.90, -87.65)
+				];
+				var flightPath = new google.maps.Polyline({
+				    path: flightPlanCoordinates,
+				    strokeColor: '#5c3977',
+				    strokeOpacity: 1.0,
+				    strokeWeight: 2
+				});
+
+				flightPath.setMap(map);
 			}
 
 			google.maps.event.addDomListener(window, 'load', initialize);
@@ -94,7 +108,7 @@
     			height: 100px; 
     			margin-right: -4px;
     			text-align: center; 
-    			width: 200px; 
+    			width: 14%; 
     		}
     		.calendar-day-content-today{
     			background: #efefef; /* Old browsers */
@@ -118,8 +132,10 @@
     			margin: 0;
     		}
     		.calendar-day-ul li{
-    			display: inline;
-    			list-style:none;
+    			display: block;
+    			float: left;
+    			list-style: none outside none;
+    			width: 33%;
     		}
     		.calendar-day-arrival{
 				-moz-border-radius: 15px;
@@ -128,7 +144,7 @@
 				box-shadow: 0 3px 10px #333333;
     			display: block;
     			height: 30px;
-    			margin-left: 15%;
+    			margin: 0 auto;
     			width: 30px;
     		}
     		.fedex-brand-background{
@@ -140,6 +156,16 @@
 				background: -ms-linear-gradient(top, #5c3977 0%,#6f3891 36%,#551a60 100%); /* IE10+ */
 				background: linear-gradient(to bottom, #5c3977 0%,#6f3891 36%,#551a60 100%); /* W3C */
 				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5c3977', endColorstr='#551a60',GradientType=0 ); /* IE6-9 */
+    		}
+    		.ups-brand-background{
+    			background: #89521b; /* Old browsers */
+				background: -moz-radial-gradient(center, ellipse cover, #89521b 1%, #703e0c 45%, #4f3403 100%); /* FF3.6+ */
+				background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(1%,#89521b), color-stop(45%,#703e0c), color-stop(100%,#4f3403)); /* Chrome,Safari4+ */
+				background: -webkit-radial-gradient(center, ellipse cover, #89521b 1%,#703e0c 45%,#4f3403 100%); /* Chrome10+,Safari5.1+ */
+				background: -o-radial-gradient(center, ellipse cover, #89521b 1%,#703e0c 45%,#4f3403 100%); /* Opera 12+ */
+				background: -ms-radial-gradient(center, ellipse cover, #89521b 1%,#703e0c 45%,#4f3403 100%); /* IE10+ */
+				background: radial-gradient(ellipse at center, #89521b 1%,#703e0c 45%,#4f3403 100%); /* W3C */
+				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#89521b', endColorstr='#4f3403',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
     		}
     	</style>
 	</head>
@@ -178,6 +204,7 @@
 							<div class="calendar-day-arrival-content">
 								<ul class="calendar-day-ul">
 									<li><div class="calendar-day-arrival fedex-brand-background"></div></li>
+									<li><div class="calendar-day-arrival ups-brand-background"></div></li>
 								</ul>
 							</div>
 						</div>
