@@ -13,9 +13,7 @@ class Package {
 	Date endTransitDate
 	Date estimatedEndTransitDate
 	
-	// 0: package was delivered
-	// 1: packing is currently in transit
-	Integer isInTransit
+	Boolean inTransit
 	
     static constraints = {
     }

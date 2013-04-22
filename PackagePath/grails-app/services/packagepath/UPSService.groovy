@@ -55,7 +55,25 @@ class UPSService {
 				  println " ${h.name} : ${h.value}"
 				}
 				println 'Response data: -----'
+				
 				System.out << reader
+				
+				// TODO: not working
+				Package p = new Package()
+				p.shippingService = "ups"
+				p.trackingNumber = reader.TrackResponse.Shipment.Package.TrackingNumber
+				p.startZip = reader.TrackResponse.Shipment.Shipper.Address.PostalCode
+				p.currentZip = reader.TrackResponse.Shipment.Package.Activity.ActivityLocation.Address.PostalCode
+				p.currentPackageStatus = reader.TrackResponse.Shipment.Package.Activity.Status.StatusType.Code
+				p.endZip = null
+				p.inTransit = true
+				if ("D".equals(p.currentPackageStatus)) {
+					p.endZip = p.currentZip
+					p.inTransit = false
+				}
+				
+				// TODO: still need date fields for Package object
+				
 				// response is in 'reader'
 				println '\n--------------------'
 				assert xml.statusLine.statusCode == 200
