@@ -31,4 +31,13 @@
 
 .navbar > .navbar-inner > .container a:hover {
 	color: #999999;
-} 
+}
+
+/** NAVIGATION **/
+.navbar-fixed-top .navbar-inner, .navbar-static-top .navbar-inner {
+ 	box-shadow: 0 1px 10px #BABABA;
+ 	border-bottom: 1px solid #ABABAB;
+}
+.navbar .nav {
+    float: right;
+}

@@ -51,123 +51,29 @@
 				});
 
 				flightPath.setMap(map);
+
+				var contentString = '<div class="maps-info">'+
+				    '<h2>Testing</h2>'+
+				    '<p>The package is in Chicago</p>'+
+				    '</div>';
+
+				var infowindow = new google.maps.InfoWindow({
+				    content: contentString
+				});
+	
+				var marker = new google.maps.Marker({
+				    position: new google.maps.LatLng(41.90, -87.65),
+				    map: map,
+				    title:"Chicago, IL"
+				});
+
+			google.maps.event.addListener(marker, 'click', function() {
+			  infowindow.open(map,marker);
+			});
 			}
 
 			google.maps.event.addDomListener(window, 'load', initialize);
     	</script>
-    	
-    	<style type="text/css">
-    		.navbar-fixed-top .navbar-inner, .navbar-static-top .navbar-inner {
-    			box-shadow: 0 1px 10px #BABABA;
-    			border-bottom: 1px solid #ABABAB;
-			}
-    		.map-section{
-    			height: 400px;
-    			position: relative;
-    			width: 100%;
-    		}
-    		.map-section-filter{
-    			background: none repeat scroll 0 0 #333333;
-    			height: 40px;
-    			left: 0;
-    			opacity: 0.6;
-    			position: absolute;
-    			text-align: center;
-    			top: 0;
-    			width: 100%;
-    			z-index: 1;
-    			-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
-    		}
-    		.map-section-filter-buttons{
-    			left: 30%;
-    			position: absolute;
-    			text-align: center;
-    			top: 8px;
-    			width: 40%;
-    			z-index: 2;
-    		}
-    		.map-canvas{
-    			height: 100%;
-    		}
-    		.calendar-ul{
-    			margin: 0;
-    		}
-    		.calendar-ul li{
-    			display: inline;
-    			list-style:none;
-    		}
-    		.calendar-day-first{
-    			border-left: 1px solid #ABABAB;
-    		}
-    		.calendar-day-content{
-				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-    			border-collapse: collapse;
-    			border-right: 1px solid #ABABAB;
-    			box-shadow: 0 0 20px #BDBDBD inset;
-    			display: inline-block;
-    			height: 100px; 
-    			margin-right: -4px;
-    			text-align: center; 
-    			width: 14%; 
-    		}
-    		.calendar-day-content-today{
-    			background: #efefef; /* Old browsers */
-				background: -moz-radial-gradient(center, ellipse cover, #efefef 0%, #cdcdcd 100%); /* FF3.6+ */
-				background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#efefef), color-stop(100%,#cdcdcd)); /* Chrome,Safari4+ */
-				background: -webkit-radial-gradient(center, ellipse cover, #efefef 0%,#cdcdcd 100%); /* Chrome10+,Safari5.1+ */
-				background: -o-radial-gradient(center, ellipse cover, #efefef 0%,#cdcdcd 100%); /* Opera 12+ */
-				background: -ms-radial-gradient(center, ellipse cover, #efefef 0%,#cdcdcd 100%); /* IE10+ */
-				background: radial-gradient(ellipse at center, #efefef 0%,#cdcdcd 100%); /* W3C */
-				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#efefef', endColorstr='#cdcdcd',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-    		}
-    		.calendar-day-title{
-    			color: rgb(85, 85, 85);
-    			font-size: 11px; 
-    			margin: 15px 0 0; 
-    		}
-    		.calendar-day-arrival-content{
-    			margin-top: 15px;
-    		}
-    		.calendar-day-ul{
-    			margin: 0;
-    		}
-    		.calendar-day-ul li{
-    			display: block;
-    			float: left;
-    			list-style: none outside none;
-    			width: 33%;
-    		}
-    		.calendar-day-arrival{
-				-moz-border-radius: 15px;
-				-webkit-border-radius: 15px;
-				border-radius: 15px;
-				box-shadow: 0 3px 10px #333333;
-    			display: block;
-    			height: 30px;
-    			margin: 0 auto;
-    			width: 30px;
-    		}
-    		.fedex-brand-background{
-    			background: #5c3977; /* Old browsers */
-				background: -moz-linear-gradient(top, #5c3977 0%, #6f3891 36%, #551a60 100%); /* FF3.6+ */
-				background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#5c3977), color-stop(36%,#6f3891), color-stop(100%,#551a60)); /* Chrome,Safari4+ */
-				background: -webkit-linear-gradient(top, #5c3977 0%,#6f3891 36%,#551a60 100%); /* Chrome10+,Safari5.1+ */
-				background: -o-linear-gradient(top, #5c3977 0%,#6f3891 36%,#551a60 100%); /* Opera 11.10+ */
-				background: -ms-linear-gradient(top, #5c3977 0%,#6f3891 36%,#551a60 100%); /* IE10+ */
-				background: linear-gradient(to bottom, #5c3977 0%,#6f3891 36%,#551a60 100%); /* W3C */
-				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5c3977', endColorstr='#551a60',GradientType=0 ); /* IE6-9 */
-    		}
-    		.ups-brand-background{
-    			background: #89521b; /* Old browsers */
-				background: -moz-radial-gradient(center, ellipse cover, #89521b 1%, #703e0c 45%, #4f3403 100%); /* FF3.6+ */
-				background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(1%,#89521b), color-stop(45%,#703e0c), color-stop(100%,#4f3403)); /* Chrome,Safari4+ */
-				background: -webkit-radial-gradient(center, ellipse cover, #89521b 1%,#703e0c 45%,#4f3403 100%); /* Chrome10+,Safari5.1+ */
-				background: -o-radial-gradient(center, ellipse cover, #89521b 1%,#703e0c 45%,#4f3403 100%); /* Opera 12+ */
-				background: -ms-radial-gradient(center, ellipse cover, #89521b 1%,#703e0c 45%,#4f3403 100%); /* IE10+ */
-				background: radial-gradient(ellipse at center, #89521b 1%,#703e0c 45%,#4f3403 100%); /* W3C */
-				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#89521b', endColorstr='#4f3403',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-    		}
-    	</style>
 	</head>
 	<body>
 		<div class="navbar navbar-inverse navbar-fixed-top">
@@ -181,9 +87,9 @@
 	          <a class="brand" href="#">PACKAGE<span class="brand-blue">PATH</span></a>
 	          <div class="nav-collapse collapse">
 	            <ul class="nav">
-	              <li class="active"><a href="#">Home</a></li>
-	              <li><a href="#about">About</a></li>
-	              <li><a href="#contact">Contact</a></li>
+	              <li><a class="nav-icon nav-home" href="#"></a></li>
+	              <li><a class="nav-icon nav-refresh" href="#about"></a></li>
+	              <li><a class="nav-icon nav-list" href="#contact"></a></li>
 	            </ul>
 	          </div><!--/.nav-collapse -->
 	        </div>
