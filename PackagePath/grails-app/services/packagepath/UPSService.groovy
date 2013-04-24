@@ -3,6 +3,7 @@ import groovyx.net.http.*
 import groovy.xml.StreamingMarkupBuilder
 import static groovyx.net.http.Method.*
 import static groovyx.net.http.ContentType.*
+import groovy.util.XmlSlurper
 
 class UPSService {
 	
@@ -48,36 +49,27 @@ class UPSService {
 				'</TrackRequest>'
 			
 			// for testing purposes
-			response.success = { xml, reader ->
-				println "response status: ${xml.statusLine}"
-				println 'Headers: -----------'
-				xml.headers.each { h ->
-				  println " ${h.name} : ${h.value}"
-				}
-				println 'Response data: -----'
+			response.success = { resp, xml ->
 				
-				System.out << reader
-				
-				// TODO: not working
 				Package p = new Package()
 				p.shippingService = "ups"
-				p.trackingNumber = reader.TrackResponse.Shipment.Package.TrackingNumber
-				p.startZip = reader.TrackResponse.Shipment.Shipper.Address.PostalCode
-				p.currentZip = reader.TrackResponse.Shipment.Package.Activity.ActivityLocation.Address.PostalCode
-				p.currentPackageStatus = reader.TrackResponse.Shipment.Package.Activity.Status.StatusType.Code
+				p.trackingNumber = xml?.Shipment?.Package?.TrackingNumber?.text()
+				p.startZip = xml?.Shipment?.Shipper?.Address?.PostalCode?.text()
+				p.currentZip = xml?.Shipment?.Package?.Activity?.ActivityLocation?.Address?.PostalCode?.text()
+				p.currentPackageStatus = xml?.Shipment?.Package?.Activity?.Status?.StatusType?.Code?.text()
 				p.endZip = null
 				p.inTransit = true
 				if ("D".equals(p.currentPackageStatus)) {
 					p.endZip = p.currentZip
 					p.inTransit = false
 				}
-				
 				// TODO: still need date fields for Package object
 				
-				// response is in 'reader'
-				println '\n--------------------'
-				assert xml.statusLine.statusCode == 200
+				return p
+				
 			}
+			
+			return null
 		}
 		
     }
