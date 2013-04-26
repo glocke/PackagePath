@@ -11,8 +11,8 @@ class PackageController {
     }
 
     def list(Integer max) {
-		def upsService = new UPSService()
-		upsService.getTrackingInfo('1Z12345E1512345676')
+		def uspsService = new USPSService()
+		uspsService.getTrackingInfo('1Z12345E1512345676')
 		
         params.max = Math.min(max ?: 10, 100)
         [packageInstanceList: Package.list(params), packageInstanceTotal: Package.count()]

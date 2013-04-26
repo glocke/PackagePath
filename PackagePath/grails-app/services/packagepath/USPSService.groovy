@@ -5,14 +5,19 @@ import static groovyx.net.http.Method.*
 import static groovyx.net.http.ContentType.*
 import groovy.util.XmlSlurper
 import java.text.SimpleDateFormat
+import groovyx.net.http.HTTPBuilder
 
-class UPSService {
-	
-    Package getTrackingInfo(String trackingNumber) {
-		def http = new HTTPBuilder('https://www.ups.com/ups.app/xml/Track')
+class USPSService {
+
+     Package getTrackingInfo(String trackingNumber) {
+		def http = new HTTPBuilder('http://production.shippingapis.com')
+		String xmlRequest = 
+			'<TrackRequest USERID="649PACKA6931">' +
+				'<TrackID ID="' + trackingNumber + '"></TrackID>' +
+			'</TrackRequest>';
 		
-		http.request( POST, XML ) {
-			body = 
+		http.get( path : '/ShippingAPITest.dll', query : [API:'TrackV2', XML: xmlRequest] ) {
+			/*body = 
 			    '<AccessRequest>' +
 					'<AccessLicenseNumber>4CB2A17181704496</AccessLicenseNumber>' +
 					'<UserId>packagepath</UserId>' +
@@ -28,12 +33,12 @@ class UPSService {
 						'<RequestOption>activity</RequestOption>' +
 					'</Request>' +
 					'<TrackingNumber>' + trackingNumber + '</TrackingNumber>' +
-				'</TrackRequest>'
+				'</TrackRequest>'*/
 			
 			// for testing purposes
-			response.success = { resp, xml ->
+			resp, xml ->
 				
-				Package p = new Package()
+				/*Package p = new Package()
 				p.shippingService = "ups"
 				p.trackingNumber = xml?.Shipment?.Package?.TrackingNumber?.text()
 				p.startZip = xml?.Shipment?.Shipper?.Address?.PostalCode?.text()
@@ -59,13 +64,20 @@ class UPSService {
 					p.estimatedEndTransitDate = upsDf.parse(strDate);
 				}
 				
-				return p
+				return p*/
 				
-			}
+				println "response status: ${resp.statusLine}"
+				println 'Headers: -----------'
+				resp.headers.each { h ->
+				  println " ${h.name} : ${h.value}"
+				}
+				println 'Response data: -----'
+				System.out << xml
+				println '\n--------------------'
+				
 			
-			return null
-		}
-		
+		}	
+		return null
+				
     }
-	
 }
