@@ -6,7 +6,9 @@
     background-color: #3d79d0;
 }
 
-/** BRAND COLORS **/
+/**************************************************************/
+/**BRAND COLORS **/
+/**************************************************************/
 .fedex-brand-background{
 	background: #5c3977; /* Old browsers */
 	background: -moz-linear-gradient(top, #5c3977 0%, #6f3891 36%, #551a60 100%); /* FF3.6+ */
@@ -44,7 +46,9 @@
 .nav-list{background-image: url('/PackagePath/images/iconic/gray_dark/list_24x21.png');}
 .nav-list:hover, .nav-list:focus{background-image: url('/PackagePath/images/iconic/blue/list_24x21.png');}
 
+/**************************************************************/
 /** CALENDAR **/
+/**************************************************************/
 .calendar-ul{
 	margin: 0;
 }
@@ -58,13 +62,13 @@
 .calendar-day-content{
 	background: -moz-linear-gradient(0% 0 90deg, #FCFCFC, #FCFCFC, #F4F4F4) repeat scroll 0 0 transparent;
 	border-collapse: collapse;
-	border-right: 1px solid #ABABAB;
+	border-right: 1px solid #999999;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) inset;
 	display: inline-block;
-	height: 100px; 
+	height: 80px;
 	margin-right: -4px;
 	text-align: center; 
-	width: 14%; 
+	width: 14.2%; 
 }
 .calendar-day-content-today{
 	background: #efefef; /* Old browsers */
@@ -82,7 +86,7 @@
 	margin: 15px 0 0; 
 }
 .calendar-day-arrival-content{
-	margin-top: 15px;
+	margin-top: 5px;
 }
 .calendar-day-ul{
 	margin: 0;
@@ -104,23 +108,25 @@
 	width: 30px;
 }
 
+/**************************************************************/
 /** MAP CSS **/
+/**************************************************************/
 .map-section{
 	height: 400px;
 	position: relative;
 	width: 100%;
 }
 .map-section-filter{
-	background: none repeat scroll 0 0 #333333;
+	background: none repeat scroll 0 0 #888888;
 	height: 40px;
 	left: 0;
-	opacity: 0.6;
+	opacity: 0.5;
 	position: absolute;
 	text-align: center;
 	top: 0;
 	width: 100%;
 	z-index: 1;
-	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
 }
 .map-section-filter-buttons{
 	left: 30%;
@@ -132,4 +138,30 @@
 }
 .map-canvas{
 	height: 100%;
+}
+
+/**************************************************************/
+/** MAP FILTER **/
+/**************************************************************/
+.master-filter{
+	background: -moz-linear-gradient(0% 0 90deg, #FCFCFC, #FCFCFC, #F4F4F4) repeat scroll 0 0 transparent;
+	border-bottom: 1px solid #AAACAF;
+	box-shadow: 0 1px 10px #AAACAF;
+	z-index: 1;
+}
+.master-filter-header{
+    border: 1px solid #888888;
+    cursor: pointer;
+    text-align: center;
+}
+h3.master-filter-title{
+	font-size: 16px;
+    margin: 0;
+    color: #AAACAF;
+}
+h3.master-filter-title:hover{
+	background-image: url("/PackagePath/images/iconic/gray_light/arrow_up_24x24.png");
+    background-position: center center;
+    background-repeat: no-repeat;
+    color: transparent;
 }
