@@ -155,7 +155,16 @@
 	     			<div class="master-filter-header">
 	     				<h3 class="master-filter-title">Filter Tracking Numbers</h3>
 	     			</div>
-	     			<div class="master-filter-content"></div>
+	     			<div class="master-filter-content">
+	     				<h4 class="filter-list-title">List of Tracking Numbers</h4>
+	     				<form id="form_map_filter">
+		     				<ul class="filter-list-ul">
+		     					<li class="filter-list-li-all"><input id="f_ALL" type="checkbox" value="ALL" class="filter-checkbox" checked/><label id="f_ALL_label" for="f_ALL" class="filter-checkbox-label">All</label></li>
+		     					<li><input id="f_123456789102" type="checkbox" value="123456789102" class="filter-checkbox"/><label id="f_123456789102_label" for="f_123456789102" class="filter-checkbox-label">123456789102</label></li>
+		     					<li><input id="f_223456789122" type="checkbox" value="223456789122" class="filter-checkbox"/><label id="f_223456789122_label" for="f_223456789122" class="filter-checkbox-label">223456789122</label></li>
+		     				</ul>
+	     				</form>
+	     			</div>
 	     		</div>
 	     	</section>
 	    </div>

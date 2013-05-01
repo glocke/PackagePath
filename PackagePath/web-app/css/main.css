@@ -150,18 +150,56 @@
 	z-index: 1;
 }
 .master-filter-header{
+	background: linear-gradient(#F0F0F0, #DDDDDD) repeat scroll 0 0 #EEEEEE;
     border: 1px solid #888888;
+    border-radius: 10px 10px 0 0;
     cursor: pointer;
     text-align: center;
+    text-shadow: 0 1px 0 #FFFFFF;
 }
 h3.master-filter-title{
 	font-size: 16px;
     margin: 0;
-    color: #AAACAF;
+    color: #3E3E3E;
 }
 h3.master-filter-title:hover{
-	background-image: url("/PackagePath/images/iconic/gray_light/arrow_up_24x24.png");
+	background-image: url("/PackagePath/images/iconic/blue/arrow_up_24x24.png");
     background-position: center center;
     background-repeat: no-repeat;
     color: transparent;
+    text-shadow: none;
+}
+.filter-list-ul{
+	margin: 0;
+}
+.filter-list-ul li{
+	list-style: none outside none;
+	background: linear-gradient(#FFFFFF, #F1F1F1) repeat scroll 0 0 #EEEEEE;
+    border-bottom: 1px solid #CCCCCC;
+    color: #222222;
+}
+.filter-list-ul li:hover{
+	background: linear-gradient(#F6F6F6, #E0E0E0) repeat scroll 0 0 #DFDFDF;
+    border-bottom: 1px solid #BBBBBB;
+    color: #222222;
+    cursor:pointer;
+    font-weight: bold;
+}
+h4.filter-list-title{
+	background: linear-gradient(#FFFFFF, #F1F1F1) repeat scroll 0 0 #EEEEEE;
+	border-bottom: 1px solid #CCCCCC;
+    color: #222222;
+	margin: 0;
+	padding: 10px;
+}
+input.filter-checkbox{
+	display: inline-block;
+    margin: 10px;
+}
+label.filter-checkbox-label{
+	display: inline-block;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    padding: 10px;
 }
