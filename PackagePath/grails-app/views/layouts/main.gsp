@@ -20,12 +20,12 @@
 		<link rel="stylesheet" href="${resource(dir: 'css', file: 'mobile.css')}" type="text/css">
 		<g:layoutHead/>
 		<r:layoutResources />
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 	</head>
 	<body>
 		<g:layoutBody/>
 		<div id="spinner" class="spinner" style="display:none;"><g:message code="spinner.alt" default="Loading&hellip;"/></div>
-		<script src="http://code.jquery.com/jquery.js"></script>
-    	<script src="js/bootstrap/bootstrap.min.js"></script>
+    	<script type="text/javascript" src="${resource(dir: 'js', file: 'bootstrap/bootstrap.min.js')}"></script>
 		<g:javascript library="application"/>
 		<r:layoutResources />
 	</body>
