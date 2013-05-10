@@ -118,23 +118,20 @@
 }
 .map-section-filter{
 	background: none repeat scroll 0 0 #888888;
-	height: 40px;
-	left: 0;
-	opacity: 0.5;
-	position: absolute;
-	text-align: center;
-	top: 0;
-	width: 100%;
-	z-index: 1;
-	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    left: 0;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
 }
-.map-section-filter-buttons{
-	left: 30%;
-	position: absolute;
-	text-align: center;
-	top: 8px;
-	width: 40%;
-	z-index: 2;
+.map-section-filter-top{
+	box-shadow: 1px 1px 3px #888888;
+	height: 2px;
+	top: 0;
+}
+.map-section-filter-bottom{
+	bottom: 0;
+	box-shadow: 1px -2px 3px #888888;
+	height: 1px;
 }
 .map-canvas{
 	height: 100%;
@@ -150,12 +147,20 @@
 	z-index: 1;
 }
 .master-filter-header{
-	background: linear-gradient(#F0F0F0, #DDDDDD) repeat scroll 0 0 #EEEEEE;
-    border: 1px solid #888888;
-    border-radius: 10px 10px 0 0;
+	border-bottom: 1px solid #888888;
+    border-top: 1px solid #888888;
     cursor: pointer;
     text-align: center;
     text-shadow: 0 1px 0 #FFFFFF;
+}
+.master-filter-ul{
+	margin: 0;
+}
+.master-filter-li{
+	display: block;
+    float: left;
+    list-style: none;
+    width: 25%;
 }
 h3.master-filter-title{
 	font-size: 16px;
@@ -202,4 +207,10 @@ label.filter-checkbox-label{
     font-weight: 600;
     margin: 0;
     padding: 10px;
+}
+.master-filter-list-content{
+	border-right: 1px solid #CCCCCC;
+}
+.master-filter-list-content-last{
+	border-right: 0;
 }

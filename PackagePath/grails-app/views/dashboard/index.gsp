@@ -72,26 +72,47 @@
 				</ul>
 			</section>
 			<section class="map-section">
-				<div class="map-section-filter"></div>
-				<div class="map-section-filter-buttons">
-					<div class="btn-group">
-						<button class="btn btn-mini">Inbound</button>
-						<button class="btn btn-mini">Outbound</button>
-					</div>
-				</div>
+				<div class="map-section-filter map-section-filter-top"></div>
+				<div class="map-section-filter map-section-filter-bottom"></div>
 	     		<div id="map" class="map-canvas"></div>
 	     		<div id="filter" class="master-map-filter">
 	     			<div class="master-filter-header">
 	     				<h3 class="master-filter-title">Filter Tracking Numbers</h3>
 	     			</div>
 	     			<div class="master-filter-content">
-	     				<h4 class="filter-list-title">List of Tracking Numbers</h4>
 	     				<form id="form_map_filter">
-		     				<ul class="filter-list-ul">
-		     					<li class="filter-list-li-all"><input id="f_ALL" type="checkbox" value="ALL" class="filter-checkbox" checked/><label id="f_ALL_label" for="f_ALL" class="filter-checkbox-label">All</label></li>
-		     					<li><input id="f_123456789102" type="checkbox" value="123456789102" class="filter-checkbox"/><label id="f_123456789102_label" for="f_123456789102" class="filter-checkbox-label">123456789102</label></li>
-		     					<li><input id="f_223456789122" type="checkbox" value="223456789122" class="filter-checkbox"/><label id="f_223456789122_label" for="f_223456789122" class="filter-checkbox-label">223456789122</label></li>
-		     				</ul>
+	     					<ul class="master-filter-ul">
+	     						<li class="master-filter-li">
+	     							<div class="master-filter-list-content">
+		     							<h4 class="filter-list-title">Inbound / Outbound</h4>
+		     							<div class="btn-group">
+		     								<button class="btn btn-mini">All</button>
+											<button class="btn btn-mini">Inbound</button>
+											<button class="btn btn-mini">Outbound</button>
+										</div>
+									</div>
+	     						</li>
+	     						<li class="master-filter-li">
+	     							<div class="master-filter-list-content">
+	     								<h4 class="filter-list-title">Carrier</h4>
+	     							</div>
+	     						</li>
+	     						<li class="master-filter-li">
+	     							<div class="master-filter-list-content">
+	     								<h4 class="filter-list-title">Days</h4>
+	     							</div>
+	     						</li>
+	     						<li class="master-filter-li">
+	     							<div class="master-filter-list-content master-filter-list-content-last">
+		     							<h4 class="filter-list-title">List of Tracking Numbers</h4>
+		     							<ul class="filter-list-ul">
+					     					<li class="filter-list-li-all"><input id="f_ALL" type="checkbox" value="ALL" class="filter-checkbox" checked/><label id="f_ALL_label" for="f_ALL" class="filter-checkbox-label">All</label></li>
+					     					<li><input id="f_123456789102" type="checkbox" value="123456789102" class="filter-checkbox"/><label id="f_123456789102_label" for="f_123456789102" class="filter-checkbox-label">123456789102</label></li>
+					     					<li><input id="f_223456789122" type="checkbox" value="223456789122" class="filter-checkbox"/><label id="f_223456789122_label" for="f_223456789122" class="filter-checkbox-label">223456789122</label></li>
+					     				</ul>
+				     				</div>
+	     						</li>
+	     					</ul>
 	     				</form>
 	     			</div>
 	     		</div>
