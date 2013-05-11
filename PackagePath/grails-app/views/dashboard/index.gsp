@@ -29,13 +29,13 @@
 			<section class="calendar">
 				<ul class="calendar-ul">
 					<li>
-						<div class="calendar-day-content calendar-day-first calendar-day-content-today">
-							<div class="calendar-day-title">APRIL 7</div>
+						<div class="calendar-day-content calendar-day-first calendar-day-disabled">
+							<div class="calendar-day-title">MAY 11</div>
 						</div>
 					</li>
 					<li>	
 						<div class="calendar-day-content">
-							<div class="calendar-day-title">APRIL 8</div>
+							<div class="calendar-day-title">MAY 12</div>
 							<div class="calendar-day-arrival-content">
 								<ul class="calendar-day-ul">
 									<li><div class="calendar-day-arrival fedex-brand-background"></div></li>
@@ -45,28 +45,34 @@
 						</div>
 					</li>
 					<li>
-						<div class="calendar-day-content">
-							<div class="calendar-day-title">APRIL 9</div>
+						<div class="calendar-day-content calendar-day-disabled">
+							<div class="calendar-day-title">MAY 13</div>
+							<div class="calendar-day-arrival-content">
+								<ul class="calendar-day-ul">
+									<li></li>
+									<li><div class="calendar-day-arrival ups-brand-background"></div></li>
+								</ul>
+							</div>
 						</div>
 					</li>
 					<li>
-						<div class="calendar-day-content">
-							<div class="calendar-day-title">APRIL 10</div>
+						<div class="calendar-day-content calendar-day-disabled">
+							<div class="calendar-day-title">MAY 14</div>
 						</div>
 					</li>
 					<li>
-						<div class="calendar-day-content">
-							<div class="calendar-day-title"">APRIL 11</div>
+						<div class="calendar-day-content calendar-day-disabled">
+							<div class="calendar-day-title">MAY 15</div>
 						</div>
 					</li>
 					<li>
-						<div class="calendar-day-content">
-							<div class="calendar-day-title"">APRIL 12</div>
+						<div class="calendar-day-content calendar-day-disabled">
+							<div class="calendar-day-title">MAY 16</div>
 						</div>
 					</li>
 					<li>
-						<div class="calendar-day-content">
-							<div class="calendar-day-title"">APRIL 13</div>
+						<div class="calendar-day-content calendar-day-disabled">
+							<div class="calendar-day-title">MAY 17</div>
 						</div>
 					</li>
 				</ul>
@@ -76,39 +82,48 @@
 				<div class="map-section-filter map-section-filter-bottom"></div>
 	     		<div id="map" class="map-canvas"></div>
 	     		<div id="filter" class="master-map-filter">
-	     			<div class="master-filter-header">
-	     				<h3 class="master-filter-title">Filter Tracking Numbers</h3>
-	     			</div>
 	     			<div class="master-filter-content">
 	     				<form id="form_map_filter">
 	     					<ul class="master-filter-ul">
 	     						<li class="master-filter-li">
 	     							<div class="master-filter-list-content">
 		     							<h4 class="filter-list-title">Inbound / Outbound</h4>
-		     							<div class="btn-group">
-		     								<button class="btn btn-mini">All</button>
-											<button class="btn btn-mini">Inbound</button>
-											<button class="btn btn-mini">Outbound</button>
-										</div>
+		     							<ul class="filter-list-ul">
+					     					<li><label id="f_IN_label" for="f_IN" class="btn active filter-checkbox-label"><input id="f_IN" type="checkbox" value="IN" class="filter-checkbox" checked/>Inbound</label></li>
+					     					<li><label id="f_OUT_label" for="f_OUT" class="btn filter-checkbox-label"><input id="f_OUT" type="checkbox" value="OUT" class="filter-checkbox"/>Outbound</label></li>
+					     				</ul>
 									</div>
 	     						</li>
 	     						<li class="master-filter-li">
 	     							<div class="master-filter-list-content">
 	     								<h4 class="filter-list-title">Carrier</h4>
+	     								<ul class="filter-list-ul">
+					     					<li><label id="f_FEDEX_label" for="f_FEDEX" class="btn filter-checkbox-label"><input id="f_FEDEX" type="checkbox" value="FEDEX" class="filter-checkbox"/>FedEx</label></li>
+					     					<li><label id="f_UPS_label" for="f_UPS" class="btn filter-checkbox-label"><input id="f_UPS" type="checkbox" value="UPS" class="filter-checkbox"/>UPS</label></li>
+					     					<li><label id="f_USPS_label" for="f_USPS" class="btn active filter-checkbox-label"><input id="f_USPS" type="checkbox" value="USPS" class="filter-checkbox" checked/>USPS</label></li>
+					     				</ul>
 	     							</div>
 	     						</li>
 	     						<li class="master-filter-li">
 	     							<div class="master-filter-list-content">
 	     								<h4 class="filter-list-title">Days</h4>
+	     								<ul class="filter-list-ul">
+					     					<li><label id="f_05112013_label" for="f_05112013" class="btn filter-checkbox-label"><input id="f_05112013" type="checkbox" value="05112013" class="filter-checkbox"/>May 11, 2013</label></li>
+					     					<li><label id="f_05122013_label" for="f_05122013" class="btn active filter-checkbox-label"><input id="f_05122013" type="checkbox" value="05122013" class="filter-checkbox" checked/>May 12, 2013</label></li>
+					     					<li><label id="f_05132013_label" for="f_05132013" class="btn filter-checkbox-label"><input id="f_05132013" type="checkbox" value="05132013" class="filter-checkbox"/>May 13, 2013</label></li>
+					     					<li><label id="f_05142013_label" for="f_05142013" class="btn filter-checkbox-label"><input id="f_05142013" type="checkbox" value="05142013" class="filter-checkbox"/>May 14, 2013</label></li>
+					     					<li><label id="f_05152013_label" for="f_05152013" class="btn filter-checkbox-label"><input id="f_05152013" type="checkbox" value="05152013" class="filter-checkbox"/>May 15, 2013</label></li>
+					     					<li><label id="f_05162013_label" for="f_05162013" class="btn filter-checkbox-label"><input id="f_05162013" type="checkbox" value="05162013" class="filter-checkbox"/>May 16, 2013</label></li>
+					     					<li><label id="f_05172013_label" for="f_05172013" class="btn filter-checkbox-label"><input id="f_05172013" type="checkbox" value="05172013" class="filter-checkbox"/>May 17, 2013</label></li>
+					     				</ul>
 	     							</div>
 	     						</li>
 	     						<li class="master-filter-li">
 	     							<div class="master-filter-list-content master-filter-list-content-last">
-		     							<h4 class="filter-list-title">List of Tracking Numbers</h4>
+		     							<h4 class="filter-list-title">Tracking #</h4>
 		     							<ul class="filter-list-ul">
-					     					<li class="filter-list-li-all"><input id="f_ALL" type="checkbox" value="ALL" class="filter-checkbox" checked/><label id="f_ALL_label" for="f_ALL" class="filter-checkbox-label">All</label></li>
-					     					<li><input id="f_123456789102" type="checkbox" value="123456789102" class="filter-checkbox"/><label id="f_123456789102_label" for="f_123456789102" class="filter-checkbox-label">123456789102</label></li>
-					     					<li><input id="f_223456789122" type="checkbox" value="223456789122" class="filter-checkbox"/><label id="f_223456789122_label" for="f_223456789122" class="filter-checkbox-label">223456789122</label></li>
+					     					<li><label id="f_123456789102_label" for="f_123456789102" class="btn filter-checkbox-label"><input id="f_123456789102" type="checkbox" value="123456789102" class="filter-checkbox"/>123456789102</label></li>
+					     					<li><label id="f_223456789122_label" for="f_223456789122" class="btn active filter-checkbox-label"><input id="f_223456789122" type="checkbox" value="223456789122" class="filter-checkbox" checked/>223456789122</label></li>
 					     				</ul>
 				     				</div>
 	     						</li>

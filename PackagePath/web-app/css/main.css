@@ -70,15 +70,8 @@
 	text-align: center; 
 	width: 14.2%; 
 }
-.calendar-day-content-today{
-	background: #efefef; /* Old browsers */
-	background: -moz-radial-gradient(center, ellipse cover, #efefef 0%, #cdcdcd 100%); /* FF3.6+ */
-	background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#efefef), color-stop(100%,#cdcdcd)); /* Chrome,Safari4+ */
-	background: -webkit-radial-gradient(center, ellipse cover, #efefef 0%,#cdcdcd 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-radial-gradient(center, ellipse cover, #efefef 0%,#cdcdcd 100%); /* Opera 12+ */
-	background: -ms-radial-gradient(center, ellipse cover, #efefef 0%,#cdcdcd 100%); /* IE10+ */
-	background: radial-gradient(ellipse at center, #efefef 0%,#cdcdcd 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#efefef', endColorstr='#cdcdcd',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+.calendar-day-disabled{
+	opacity: .2;
 }
 .calendar-day-title{
 	color: rgb(85, 85, 85);
@@ -146,42 +139,26 @@
 	box-shadow: 0 1px 10px #AAACAF;
 	z-index: 1;
 }
-.master-filter-header{
-	border-bottom: 1px solid #888888;
-    border-top: 1px solid #888888;
-    cursor: pointer;
-    text-align: center;
-    text-shadow: 0 1px 0 #FFFFFF;
-}
 .master-filter-ul{
 	margin: 0;
 }
 .master-filter-li{
 	display: block;
     float: left;
-    list-style: none;
+    height: 200px;
+    list-style: none outside none;
+    min-height: 200px;
     width: 25%;
 }
-h3.master-filter-title{
-	font-size: 16px;
-    margin: 0;
-    color: #3E3E3E;
-}
-h3.master-filter-title:hover{
-	background-image: url("/PackagePath/images/iconic/blue/arrow_up_24x24.png");
-    background-position: center center;
-    background-repeat: no-repeat;
-    color: transparent;
-    text-shadow: none;
-}
 .filter-list-ul{
-	margin: 0;
+	height: 160px;
+    margin: 0;
+    overflow: auto;
 }
 .filter-list-ul li{
-	list-style: none outside none;
-	background: linear-gradient(#FFFFFF, #F1F1F1) repeat scroll 0 0 #EEEEEE;
-    border-bottom: 1px solid #CCCCCC;
-    color: #222222;
+	color: #222222;
+    list-style: none outside none;
+    margin: 2px 10px;
 }
 .filter-list-ul li:hover{
 	background: linear-gradient(#F6F6F6, #E0E0E0) repeat scroll 0 0 #DFDFDF;
@@ -202,14 +179,18 @@ input.filter-checkbox{
     margin: 10px;
 }
 label.filter-checkbox-label{
-	display: inline-block;
+	border-radius: 0 0 0 0;
+    display: inline-block;
     font-size: 16px;
     font-weight: 600;
     margin: 0;
-    padding: 10px;
+    padding: 0;
+    text-align: left;
+    width: 100%;
 }
 .master-filter-list-content{
 	border-right: 1px solid #CCCCCC;
+    height: 100%;
 }
 .master-filter-list-content-last{
 	border-right: 0;
