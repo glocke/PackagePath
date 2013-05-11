@@ -16,9 +16,8 @@
 	          <a class="brand" href="#">PACKAGE<span class="brand-blue">PATH</span></a>
 	          <div class="nav-collapse collapse">
 	            <ul class="nav">
-	              <li><a class="nav-icon nav-home" href="#"></a></li>
-	              <li><a class="nav-icon nav-refresh" href="#about"></a></li>
-	              <li><a class="nav-icon nav-list" href="#contact"></a></li>
+	              <li><a class="nav-icon nav-home" href="${createLink(action: 'Home',controller:'Home')}" title="Home"></a></li>
+	              <li><a class="nav-icon nav-refresh" href="#" title="Refresh"></a></li>
 	            </ul>
 	          </div><!--/.nav-collapse -->
 	        </div>

@@ -15,11 +15,12 @@
 	          </button>
 	          <a class="brand" href="#">PACKAGE<span class="brand-blue">PATH</span></a>
 	          <div class="nav-collapse collapse">
-	            <ul class="nav">
-	              <li><g:link controller="Dashboard">Dashboard</g:link></li>
-	              <li><a href="#about">About</a></li>
-	              <li><a href="#contact">Contact</a></li>
-	            </ul>
+	            <div class="nav-collapse collapse">
+					<ul class="nav">
+						<li><a class="nav-icon nav-dash" href="${createLink(controller: 'Dashboard')}" title="Dashboard"></a></li>
+						<li><a class="nav-icon nav-contact" href="#contact" title="Contact Us"></a></li>
+					</ul>
+				</div>
 	          </div><!--/.nav-collapse -->
 	        </div>
 	      </div>

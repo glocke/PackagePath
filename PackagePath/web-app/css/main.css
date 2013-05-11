@@ -41,10 +41,12 @@
 }
 .nav-home{background-image: url('/PackagePath/images/iconic/gray_dark/home_24x24.png');}
 .nav-home:hover, .nav-home:focus{background-image: url('/PackagePath/images/iconic/blue/home_24x24.png');}
+.nav-dash{background-image: url('/PackagePath/images/iconic/gray_dark/chart_alt_23x24.png');}
+.nav-dash:hover, .nav-dash:focus{background-image: url('/PackagePath/images/iconic/blue/chart_alt_23x24.png');}
+.nav-contact{background-image: url('/PackagePath/images/iconic/gray_dark/mail_24x18.png');}
+.nav-contact:hover, .nav-contact:focus{background-image: url('/PackagePath/images/iconic/blue/mail_24x18.png');}
 .nav-refresh{background-image: url('/PackagePath/images/iconic/gray_dark/loop_24x24.png');}
 .nav-refresh:hover, .nav-refresh:focus{background-image: url('/PackagePath/images/iconic/blue/loop_24x24.png');}
-.nav-list{background-image: url('/PackagePath/images/iconic/gray_dark/list_24x21.png');}
-.nav-list:hover, .nav-list:focus{background-image: url('/PackagePath/images/iconic/blue/list_24x21.png');}
 
 /**************************************************************/
 /** CALENDAR **/
