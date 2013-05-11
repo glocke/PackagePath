@@ -117,6 +117,7 @@ pp.dash = function(){
 			var marker = new google.maps.Marker({
 			    position: new google.maps.LatLng(41.90, -87.65),
 			    map: map,
+			    icon: "/PackagePath/images/iconic/blue/map_pin_fill_20x32.png",
 			    title:"Chicago, IL"
 			});
 	
