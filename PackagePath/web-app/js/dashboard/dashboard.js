@@ -51,31 +51,46 @@ pp.dash = function(){
 			 * Create the initial google map
 			 */
 			var map = pp.dash.createMap();
-			
-			/*
-			 * set package path
-			 */
-			pp.dash.setPackagePath(map);
-
-			/*
-			 * set the markers
-			 */
-			pp.dash.setMarkers(map);
 		},
 		
 		/**
 		 * Create the initial google map
 		 */
 		createMap: function(){
-			var opt = {
-	       		mapTypeId: google.maps.MapTypeId.ROADMAP,
-				center: new google.maps.LatLng(43.0731, -89.4011),
-				styles: _map_style,
-				mapTypeControl: false,
-	            zoom: 5
-			};
-	 		          
-			return new google.maps.Map(document.getElementById('map'), opt);
+			
+			$.ajax({
+				  url: "/PackagePath/images/iconic/gray_dark/home_24x24.png",
+				  beforeSend: function ( xhr ){}
+			}).done(function (data, textStatus, jqXHR) {
+				
+				/*
+				 * Initial map drawing
+				 */
+				var opt = {
+		       		mapTypeId: google.maps.MapTypeId.ROADMAP,
+					center: new google.maps.LatLng(43.0731, -89.4011),
+					styles: _map_style,
+					mapTypeControl: false,
+		            zoom: 5
+				};
+		 		          
+				var map = new google.maps.Map(document.getElementById('map'), opt);
+				
+				/*
+				 * set package path
+				 */
+				pp.dash.setPackagePath(map);
+
+				/*
+				 * set the markers
+				 */
+				pp.dash.setMarkers(map);
+				
+			}).fail(function (){
+				
+			}).always(function (){
+				
+			});
 		},
 		
 		/**
@@ -105,8 +120,8 @@ pp.dash = function(){
 		 *  @param map = google map reference
 		 */
 		setMarkers: function(map){
-			var contentString = '<div class="maps-info">'+
-		    '<h2>Testing</h2>'+
+			var contentString = '<div class="popover-title">Testing</div>'+
+		    '<div class="popover-content">'+
 		    '<p>The package is in Chicago</p>'+
 		    '</div>';
 
