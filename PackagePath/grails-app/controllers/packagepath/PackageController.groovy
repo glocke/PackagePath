@@ -6,13 +6,29 @@ class PackageController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 	
+	// Brandon - take this action, put it where you want it
+	// NOT COMPLETE
+	def testTracker(String type, String trackingNumber) {
+		Package p
+		
+		if (params.type.equalsIgnoreCase("ups")) {
+			def upsService = new UPSService()
+			p = upsService.getTrackingInfo(params.trackingNumber)
+		} else {
+			p = new Package()	
+		}
+		
+		System.out.println(p.toString())
+		redirect(action: "list")
+	}
+	
     def index() {
         redirect(action: "list", params: params)
     }
 
     def list(Integer max) {
-		def uspsService = new USPSService()
-		uspsService.getTrackingInfo('1Z12345E1512345676')
+		/*def uspsService = new USPSService()
+		uspsService.getTrackingInfo('1Z12345E1512345676')*/
 		
         params.max = Math.min(max ?: 10, 100)
         [packageInstanceList: Package.list(params), packageInstanceTotal: Package.count()]
