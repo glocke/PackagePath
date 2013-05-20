@@ -1,5 +1,6 @@
 package packagepath
 
+import grails.converters.JSON
 import org.springframework.dao.DataIntegrityViolationException
 
 class PackageController {
@@ -18,8 +19,10 @@ class PackageController {
 			p = new Package()	
 		}
 		
+		// for testing purposes
 		System.out.println(p.toString())
-		redirect(action: "list")
+		
+		render p as JSON
 	}
 	
     def index() {
