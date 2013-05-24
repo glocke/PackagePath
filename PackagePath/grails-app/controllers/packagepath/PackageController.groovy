@@ -10,6 +10,7 @@ class PackageController {
 	// Brandon - take this action, put it where you want it
 	// NOT COMPLETE
 	def testTracker(String type, String trackingNumber) {
+		List<Package> packageList = new ArrayList<Package>()
 		Package p
 		
 		if (params.type.equalsIgnoreCase("ups")) {
@@ -19,10 +20,12 @@ class PackageController {
 			p = new Package()	
 		}
 		
+		packageList.add(p)
+		
 		// for testing purposes
 		System.out.println(p.toString())
 		
-		render p as JSON
+		render packageList as JSON
 	}
 	
     def index() {

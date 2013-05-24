@@ -8,6 +8,11 @@ pp.dash = function(){
 	/*
 	 * private variables
 	 */
+	var _packages;
+	var _map;
+	var _flightPaths = [];
+	
+	//google map styles
 	var _map_style = [
      	{
 			"featureType": "water",
@@ -32,6 +37,29 @@ pp.dash = function(){
 	/*
 	 * private functions
 	 */
+	/**
+	 * This method will update the map of packages
+	 * 
+	 * @param json
+	 */
+	function _updatePackages(json){
+		
+		_packages = new Object();
+		
+		/*
+		 * Iterate the response
+		 */
+		$.each(json, function(i, item) {
+			_packages[json[i].shippingService] = json[i];
+		});
+	}
+	
+	/**
+	 * This method will be responsible for filtering the packages on the screen
+	 */
+	function _filterPackages(){
+		
+	}
 	
 	/*
 	 * API
@@ -59,9 +87,20 @@ pp.dash = function(){
 		createMap: function(){
 			
 			$.ajax({
-				  url: "/PackagePath/images/iconic/gray_dark/home_24x24.png",
-				  beforeSend: function ( xhr ){}
+				  url: "/PackagePath/package/testTracker?type=ups&trackingNumber=1Z12345E1512345676",
+				  beforeSend: function ( xhr ){},
+				  dataType: "json"
 			}).done(function (data, textStatus, jqXHR) {
+				
+				/*
+				 * Update the packages
+				 */
+				_updatePackages(data);
+				
+				/*
+				 * Filter the packages
+				 */
+				_filterPackages();
 				
 				/*
 				 * Initial map drawing
@@ -74,17 +113,17 @@ pp.dash = function(){
 		            zoom: 5
 				};
 		 		          
-				var map = new google.maps.Map(document.getElementById('map'), opt);
+				_map = new google.maps.Map(document.getElementById('map'), opt);
 				
 				/*
 				 * set package path
 				 */
-				pp.dash.setPackagePath(map);
+				pp.dash.setPackagePath();
 
 				/*
 				 * set the markers
 				 */
-				pp.dash.setMarkers(map);
+				pp.dash.setMarkers();
 				
 			}).fail(function (){
 				
@@ -98,7 +137,11 @@ pp.dash = function(){
 		 * 
 		 * @param map - google map reference
 		 */
-		setPackagePath: function(map){
+		setPackagePath: function(){
+			
+			/*
+			 * Get the flight paths
+			 */
 			var flightPlanCoordinates = [
  				new google.maps.LatLng(35.65, -105.15),
  				new google.maps.LatLng(37.77, -99.97),
@@ -111,7 +154,8 @@ pp.dash = function(){
  			    strokeWeight: 2
  			});
 
- 			flightPath.setMap(map);
+ 			_flightPaths.push(flightPath);
+ 			flightPath.setMap(_map);
 		},
 		
 		/**
@@ -119,7 +163,7 @@ pp.dash = function(){
 		 * 
 		 *  @param map = google map reference
 		 */
-		setMarkers: function(map){
+		setMarkers: function(){
 			var contentString = '<div class="popover-title">Testing</div>'+
 		    '<div class="popover-content">'+
 		    '<p>The package is in Chicago</p>'+
@@ -131,13 +175,13 @@ pp.dash = function(){
 	
 			var marker = new google.maps.Marker({
 			    position: new google.maps.LatLng(41.90, -87.65),
-			    map: map,
+			    map: _map,
 			    icon: "/PackagePath/images/iconic/blue/map_pin_fill_20x32.png",
 			    title:"Chicago, IL"
 			});
 	
 			google.maps.event.addListener(marker, 'click', function() {
-			  infowindow.open(map,marker);
+			  infowindow.open(_map,marker);
 			});
 		}
 	}

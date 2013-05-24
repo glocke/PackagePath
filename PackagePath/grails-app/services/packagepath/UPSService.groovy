@@ -50,12 +50,12 @@ class UPSService {
 				String strDate = null;
 				
 				strDate = xml?.Shipment?.EstimatedDeliveryDetails?.Date?.text()
-				if (strDate != null) {
+				if (strDate != null && !strDate.isEmpty()) {
 					p.estimatedEndTransitDate = upsDf.parse(strDate);
 				}
 				// update estimate if a scheduled date is present first
 				strDate = xml?.Shipment?.ScheduledDeliveryDate?.text()
-				if (strDate != null) {
+				if (strDate != null && !strDate.isEmpty()) {
 					p.estimatedEndTransitDate = upsDf.parse(strDate);
 				}
 				
