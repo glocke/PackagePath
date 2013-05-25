@@ -8,9 +8,17 @@ pp.dash = function(){
 	/*
 	 * private variables
 	 */
-	var _packages;
-	var _map;
-	var _flightPaths = [];
+	var _packages;				//map of packages ['tracking #'] = package
+	var _map;					//reference to the google map
+	var _paths = [];			//all of the existing paths ['tracking #'] = path
+	var _markers = [];			//all of the markers ['tracking #']
+	var _queueAdds = [];		//all of the tracking numbers that need to be added to the map
+	var _queueDeletes = [];	//all of the tracking numbers that need to be removed from the map
+	
+	/*
+	 * jQuery variables
+	 */
+	var _$form_map_filter;		//jQuery reference to the form
 	
 	//google map styles
 	var _map_style = [
@@ -50,7 +58,107 @@ pp.dash = function(){
 		 * Iterate the response
 		 */
 		$.each(json, function(i, item) {
-			_packages[json[i].shippingService] = json[i];
+			
+			/*
+			 * Keep track of the packages
+			 */
+			_packages[json[i].trackingNumber] = json[i];
+			
+			/*
+			 * Draw the filter
+			 */
+		});
+		
+		/*
+		 * Bind filters
+		 */
+		_bindFilteringEvents();
+	}
+	
+	/**
+	 * Bind the events for the filter
+	 */
+	function _bindFilteringEvents(){
+		
+		//reset the queues
+		_queueAdds = [];		
+		_queueDeletes = [];
+		
+		
+		/*
+		 * Direction
+		 */
+		_$form_map_filter.on('click', "input.filter-direction", function(){
+
+		});
+		
+		/*
+		 * Carrier
+		 */
+		_$form_map_filter.on('click', "input.filter-carrier", function(){
+			var $this = $(this);
+			
+			//get the carrier
+			var carrier = $this.val().slice()[1];
+			
+			//iterate the packages
+			for (var key in _packages) {
+				
+				//does the carrier match?
+				if(_packages.hasOwnProperty(key) && _packages[key].shippingService === carrier){
+					if($this.prop('checked')){
+						_queueAdds.push(id);
+					}
+					else{
+						_queueDeletes.push(id);
+					}
+				}
+			}
+			_filterPackages();
+		});
+		
+		/*
+		 * Days
+		 */
+		_$form_map_filter.on('click', "input.filter-day", function(){
+			var $this = $(this);
+			
+			//get the unformatted date
+			var endDate = $this.val().slice()[1];
+			endDate = endDate.substring(0,2) + '/' + endDate.substring(2, 4) + "/" + endDate.substring(4);
+			
+			//iterate the packages
+			for (var key in _packages) {
+				
+				//does the date match?
+				if(_packages.hasOwnProperty(key) && _packages[key].endTransitDate === endDate){
+					if($this.prop('checked')){
+						_queueAdds.push(id);
+					}
+					else{
+						_queueDeletes.push(id);
+					}
+				}
+			}
+			_filterPackages();
+		});
+		
+		/*
+		 * Tracking Number
+		 */
+		_$form_map_filter.on('click', "input.filter-number", function(){
+			var $this = $(this);
+			
+			//get the id
+			var id = $this.val().slice()[1];
+			if($this.prop('checked')){
+				_queueAdds.push(id);
+			}
+			else{
+				_queueDeletes.push(id);
+			}
+			
+			_filterPackages();
 		});
 	}
 	
@@ -58,7 +166,12 @@ pp.dash = function(){
 	 * This method will be responsible for filtering the packages on the screen
 	 */
 	function _filterPackages(){
-		
+		for(var key in _queueAdds){
+			pp.dash.drawPath(_packages[key], true);
+		}
+		for(var key in _queueDeletes){
+			pp.dash.drawPath(_packages[key], false);
+		}
 	}
 	
 	/*
@@ -73,12 +186,30 @@ pp.dash = function(){
 		/*
 		 * public functions
 		 */
+		/**
+		 * Window onload function
+		 */
 		load: function(){
 			
 			/*
 			 * Create the initial google map
 			 */
 			var map = pp.dash.createMap();
+		},
+		
+		/**
+		 * Document ready function
+		 */
+		documentReady: function(){
+			
+			//set the form reference
+			_$form_map_filter = $("#form_map_filter");
+			
+			/*
+			 * Bind the filtering events.  We shouldn't have to bind after each ajax call if
+			 * we bind to the form and not the input
+			 */
+			_bindFilteringEvents();
 		},
 		
 		/**
@@ -119,11 +250,6 @@ pp.dash = function(){
 				 * set package path
 				 */
 				pp.dash.setPackagePath();
-
-				/*
-				 * set the markers
-				 */
-				pp.dash.setMarkers();
 				
 			}).fail(function (){
 				
@@ -154,16 +280,64 @@ pp.dash = function(){
  			    strokeWeight: 2
  			});
 
- 			_flightPaths.push(flightPath);
+ 			_paths['123456789102'] = flightPath;
  			flightPath.setMap(_map);
+ 			
+ 			/*
+ 			 * Make another one
+ 			 */
+ 			var upsCoordinates = [
+ 				new google.maps.LatLng(34.05, -118.24),
+ 				new google.maps.LatLng(39.74, -104.98)
+ 			];
+ 			var upsPath = new google.maps.Polyline({
+ 			    path: upsCoordinates,
+ 			    strokeColor: '#5C3317',
+ 			    strokeOpacity: 1.0,
+ 			    strokeWeight: 2
+ 			});
+ 			
+ 			_paths['223456789122'] = upsPath;
+ 			upsPath.setMap(_map);
+		},
+		
+		/**
+		 * Draw the path
+		 * 
+		 * @param packobj - the object that needs to be drawn
+		 * @param add - boolean to decide if we are adding or removing
+		 */
+		drawPath: function(packobj, add){
+			
+			if(add){
+				/*
+				 * Draw the polyline
+				 */
+				
+				/*
+				 * Draw the markers
+				 */
+				pp.dash.setMarkers(packobj);
+			}
+			else{
+				/*
+				 * Clear the polyline
+				 */
+				_paths[packobj.trackingNumber].setMap(null);
+				
+				/*
+				 * Clear the markers
+				 */
+				_markers[packobj.trackingNumber].setMap(null);
+			}
 		},
 		
 		/**
 		 * Set the package path's markers on the screen
 		 * 
-		 *  @param map = google map reference
+		 *  @param packobj - the object that needs to be drawn
 		 */
-		setMarkers: function(){
+		setMarkers: function(packobj){
 			var contentString = '<div class="popover-title">Testing</div>'+
 		    '<div class="popover-content">'+
 		    '<p>The package is in Chicago</p>'+
@@ -179,6 +353,9 @@ pp.dash = function(){
 			    icon: "/PackagePath/images/iconic/blue/map_pin_fill_20x32.png",
 			    title:"Chicago, IL"
 			});
+			
+			//add the marker
+			_markers[packobj.trackingNumber] = marker;
 	
 			google.maps.event.addListener(marker, 'click', function() {
 			  infowindow.open(_map,marker);
@@ -191,3 +368,10 @@ pp.dash = function(){
  * jQuery window load
  */
 $(window).load(pp.dash.load);
+
+/*
+ * jQuery document ready
+ */
+$(document).ready(function(){
+	pp.dash.documentReady();
+});
