@@ -67,12 +67,82 @@ pp.dash = function(){
 			/*
 			 * Draw the filter
 			 */
+			_drawFilter();
 		});
 		
 		/*
 		 * Bind filters
 		 */
 		_bindFilteringEvents();
+	}
+	
+	/**
+	 * Draw the filter section of the screen
+	 */
+	function _drawFilter(){
+		
+		var filtersource = {};
+		
+		var destinations = [];
+		var o1 = {};
+		o1.name = "in";
+		o1.label = "Inbound";
+		destinations.push(o1);
+		
+		var o2 = {};
+		o2.name = "out";
+		o2.label = "Outbound";
+		destinations.push(o2);
+		
+		filtersource.destination = destinations;
+		
+		var carriers = [];
+		var o3 = {};
+		o3.name = "fedex";
+		o3.label = "FedEx";
+		carriers.push(o3);
+		
+		var o4 = {};
+		o4.name = "ups";
+		o4.label = "UPS";
+		carriers.push(o4);
+		
+		filtersource.carrier = carriers;
+		
+		var days = [];
+		var o5 = {};
+		o5.name = "05122013";
+		o5.label = "May 12, 2013";
+		days.push(o5);
+		
+		filtersource.days = days;
+		
+		var numbers = [];
+		var o6 = {};
+		o6.name = "123456789102";
+		o6.label = "123456789102";
+		numbers.push(o6);
+		
+		var o7 = {};
+		o7.name = "223456789122";
+		o7.label = "223456789122";
+		numbers.push(o7);
+		
+		filtersource.numbers = numbers;
+		
+		console.debug("%o", filtersource);
+		
+		/**
+		* Parse an existing JSON data structure with a XSLT template
+		*/
+		Stapling.parse(filtersource, '/PackagePath/js/stapling/templates/filter.xslt', function (xml) {
+
+			if (console && console.log) {
+				console.log("XML-document: ", xml);
+			}
+
+			_$form_map_filter.html(this);
+		});
 	}
 	
 	/**
