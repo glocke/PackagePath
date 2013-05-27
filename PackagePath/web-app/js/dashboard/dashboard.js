@@ -13,12 +13,22 @@ pp.dash = function(){
 	var _paths = [];			//all of the existing paths ['tracking #'] = path
 	var _markers = [];			//all of the markers ['tracking #']
 	var _queueAdds = [];		//all of the tracking numbers that need to be added to the map
-	var _queueDeletes = [];	//all of the tracking numbers that need to be removed from the map
+	var _queueDeletes = [];		//all of the tracking numbers that need to be removed from the map
+	var _f_Destination;			//map of the destination
+	var _f_Days;				//map of the days
+	var _f_Carrier;				//map of the carriers
 	
 	/*
 	 * jQuery variables
 	 */
 	var _$form_map_filter;		//jQuery reference to the form
+	
+	//english messages
+	var EnglishMessage = {
+		'label.fedex': "FedEx",
+		'label.ups': "UPS",
+		'label.usps': "USPS"
+	};
 	
 	//google map styles
 	var _map_style = [
@@ -53,6 +63,8 @@ pp.dash = function(){
 	function _updatePackages(json){
 		
 		_packages = new Object();
+		_f_Carrier = new Object();		// ['ups', [number1, number2, etc]]
+		_f_Days = new Object();			// ['05/22/2013', [number1, number2, etc]]
 		
 		/*
 		 * Iterate the response
@@ -62,13 +74,46 @@ pp.dash = function(){
 			/*
 			 * Keep track of the packages
 			 */
-			_packages[json[i].trackingNumber] = json[i];
+			var pack_obj = json[i];
+			var tracking_number = pack_obj.trackingNumber;
+			_packages[tracking_number] = pack_obj;
 			
 			/*
-			 * Draw the filter
+			 * Find the unique carriers for filtering
 			 */
-			_drawFilter();
+			var carrier_nums = [];
+			if (pack_obj.shippingService in _f_Carrier) {
+				
+				//get the existing list
+				carrier_nums = _f_Carrier[pack_obj.shippingService];
+			}
+			//add to the list
+			carrier_nums.push(tracking_number);
+			
+			//set the list of tracking numbers for that carrier
+			_f_Carrier[pack_obj.shippingService] = carrier_nums;
+			
+			/*
+			 * Find the unique days for filtering
+			 */
+			var days_nums = [];
+			if (pack_obj.endTransitDate in _f_Days) {
+				
+				//get the existing list
+				days_nums = _f_Days[pack_obj.endTransitDate];
+			}
+			//add to the list
+			days_nums.push(tracking_number);
+			
+			//set the list of tracking numbers for that day
+			_f_Days[pack_obj.endTransitDate] = days_nums;
+			
 		});
+		
+		/*
+		 * Draw the filter
+		 */
+		_drawFilter();
 		
 		/*
 		 * Bind filters
@@ -81,8 +126,10 @@ pp.dash = function(){
 	 */
 	function _drawFilter(){
 		
+		//filter source
 		var filtersource = {};
 		
+		//destinations
 		var destinations = [];
 		var o1 = {};
 		o1.name = "in";
@@ -94,41 +141,46 @@ pp.dash = function(){
 		o2.label = "Outbound";
 		destinations.push(o2);
 		
+		//set the destinations
 		filtersource.destination = destinations;
 		
+		var idx;
+		
+		//carriers
 		var carriers = [];
-		var o3 = {};
-		o3.name = "fedex";
-		o3.label = "FedEx";
-		carriers.push(o3);
-		
-		var o4 = {};
-		o4.name = "ups";
-		o4.label = "UPS";
-		carriers.push(o4);
-		
+		var carrier_obj = {};
+		var carrier_keys = Object.keys(_f_Carrier);
+		for(idx = 0; idx < carrier_keys.length; idx++) {
+			carrier_obj = {};
+			carrier_obj.name = carrier_keys[idx];
+			carrier_obj.label = pp.dash.getText("label." + carrier_keys[idx]);
+			carriers.push(carrier_obj);
+		}
 		filtersource.carrier = carriers;
 		
+		//days
 		var days = [];
-		var o5 = {};
-		o5.name = "05122013";
-		o5.label = "May 12, 2013";
-		days.push(o5);
-		
+		var days_obj = {};
+		var day_keys = Object.keys(_f_Days);
+		for(idx = 0; idx < day_keys.length; idx++) {
+			days_obj = {};
+			days_obj.name = day_keys[idx];
+			days_obj.label = day_keys[idx];
+			days.push(days_obj);
+		}
 		filtersource.days = days;
 		
-		var numbers = [];
-		var o6 = {};
-		o6.name = "123456789102";
-		o6.label = "123456789102";
-		numbers.push(o6);
-		
-		var o7 = {};
-		o7.name = "223456789122";
-		o7.label = "223456789122";
-		numbers.push(o7);
-		
-		filtersource.numbers = numbers;
+		//tracking numbers
+		var nums = [];
+		var num_obj = {};
+		var num_keys = Object.keys(_packages);
+		for(idx = 0; idx < num_keys.length; idx++) {
+			num_obj = {};
+			num_obj.name = num_keys[idx];
+			num_obj.label = num_keys[idx];
+			nums.push(num_obj);
+		}
+		filtersource.numbers = nums;
 		
 		console.debug("%o", filtersource);
 		
@@ -294,9 +346,41 @@ pp.dash = function(){
 			}).done(function (data, textStatus, jqXHR) {
 				
 				/*
+				 * TESTING!
+				 */
+				var datas = [
+				    	{"class":"packagepath.Package",
+				    		"id":null,
+				    		"currentPackageStatus":"",
+				    		"currentZip":"",
+				    		"endTransitDate":"05/12/2013",
+				    		"endZip":"",
+				    		"estimatedEndTransitDate":null,
+				    		"inTransit":true,
+				    		"shippingService":"ups",
+				    		"startTransitDate":null,
+				    		"startZip":"",
+				    		"trackingNumber":"123456789102",
+				    		"user":null},
+				    		{"class":"packagepath.Package",
+				    		"id":null,
+				    		"currentPackageStatus":"",
+				    		"currentZip":"",
+				    		"endTransitDate":"05/12/2013",
+				    		"endZip":"",
+				    		"estimatedEndTransitDate":null,
+				    		"inTransit":true,
+				    		"shippingService":"fedex",
+				    		"startTransitDate":null,
+				    		"startZip":"",
+				    		"trackingNumber":"223456789122",
+				    		"user":null}
+				    	];
+				
+				/*
 				 * Update the packages
 				 */
-				_updatePackages(data);
+				_updatePackages(datas);
 				
 				/*
 				 * Filter the packages
@@ -430,6 +514,16 @@ pp.dash = function(){
 			google.maps.event.addListener(marker, 'click', function() {
 			  infowindow.open(_map,marker);
 			});
+		},
+		
+		/**
+		 * Get text for this screen via a key lookup
+		 * 
+		 * @param key
+		 */
+		getText: function (key) {
+			//eventually check to see which language we should use
+			return EnglishMessage[key];
 		}
 	}
 }();
