@@ -12,8 +12,6 @@ pp.dash = function(){
 	var _map;					//reference to the google map
 	var _paths = [];			//all of the existing paths ['tracking #'] = path
 	var _markers = [];			//all of the markers ['tracking #']
-	var _queueAdds = [];		//all of the tracking numbers that need to be added to the map
-	var _queueDeletes = [];		//all of the tracking numbers that need to be removed from the map
 	var _f_Destination;			//map of the destination
 	var _f_Days;				//map of the days
 	var _f_Carrier;				//map of the carriers
@@ -202,10 +200,21 @@ pp.dash = function(){
 	 */
 	function _bindFilteringEvents(){
 		
-		//reset the queues
-		_queueAdds = [];		
-		_queueDeletes = [];
-		
+		/*
+		 * Regular UI fun
+		 */
+		_$form_map_filter.on('click', "input:checkbox", function(){
+			var $this = $(this);
+			//adding or removing?
+			if($this.prop('checked')){
+				//add the class
+				$this.parent().addClass("active");
+			}
+			else{
+				//remove the class
+				$this.parent().removeClass("active");
+			}
+		});
 		
 		/*
 		 * Direction
@@ -221,22 +230,9 @@ pp.dash = function(){
 			var $this = $(this);
 			
 			//get the carrier
-			var carrier = $this.val().slice()[1];
-			
-			//iterate the packages
-			for (var key in _packages) {
-				
-				//does the carrier match?
-				if(_packages.hasOwnProperty(key) && _packages[key].shippingService === carrier){
-					if($this.prop('checked')){
-						_queueAdds.push(id);
-					}
-					else{
-						_queueDeletes.push(id);
-					}
-				}
-			}
-			_filterPackages();
+			var carrier = $this.val();
+
+			_filterPackages(_f_Carrier[carrier], $this.prop('checked'));
 		});
 		
 		/*
@@ -246,23 +242,10 @@ pp.dash = function(){
 			var $this = $(this);
 			
 			//get the unformatted date
-			var endDate = $this.val().slice()[1];
+			var endDate = $this.val();
 			endDate = endDate.substring(0,2) + '/' + endDate.substring(2, 4) + "/" + endDate.substring(4);
-			
-			//iterate the packages
-			for (var key in _packages) {
-				
-				//does the date match?
-				if(_packages.hasOwnProperty(key) && _packages[key].endTransitDate === endDate){
-					if($this.prop('checked')){
-						_queueAdds.push(id);
-					}
-					else{
-						_queueDeletes.push(id);
-					}
-				}
-			}
-			_filterPackages();
+
+			_filterPackages(_f_Days[endDate], $this.prop('checked'));
 		});
 		
 		/*
@@ -272,27 +255,65 @@ pp.dash = function(){
 			var $this = $(this);
 			
 			//get the id
-			var id = $this.val().slice()[1];
-			if($this.prop('checked')){
-				_queueAdds.push(id);
-			}
-			else{
-				_queueDeletes.push(id);
-			}
+			var id = $this.val();
+			var filterArray = [];
+			filterArray.push(id);
 			
-			_filterPackages();
+			_filterPackages(filterArray, $this.prop('checked'));
 		});
 	}
 	
 	/**
 	 * This method will be responsible for filtering the packages on the screen
 	 */
-	function _filterPackages(){
-		for(var key in _queueAdds){
-			pp.dash.drawPath(_packages[key], true);
+	function _filterPackages(num_array, add){
+		var idx;
+		for(idx = 0; idx < num_array.length; idx++) {
+			pp.dash.drawPath(_packages[num_array[idx]], add);
 		}
-		for(var key in _queueDeletes){
-			pp.dash.drawPath(_packages[key], false);
+	}
+	
+	/**
+	 * Draw the path on the map based on the package object
+	 */
+	function _drawPolyline(package_obj){
+		
+		if (package_obj.trackingNumber === '123456789102'){
+			/*
+			 * Get the flight paths
+			 */
+			var flightPlanCoordinates = [
+				new google.maps.LatLng(35.65, -105.15),
+				new google.maps.LatLng(37.77, -99.97),
+			    new google.maps.LatLng(41.90, -87.65)
+			];
+			var flightPath = new google.maps.Polyline({
+			    path: flightPlanCoordinates,
+			    strokeColor: '#5C3317',
+			    strokeOpacity: 1.0,
+			    strokeWeight: 2
+			});
+	
+			_paths[package_obj.trackingNumber] = flightPath;
+			flightPath.setMap(_map);
+		}
+		else{
+			/*
+			 * Make another one
+			 */
+			var flightPlanCoordinates = [
+				new google.maps.LatLng(34.05, -118.24),
+				new google.maps.LatLng(39.74, -104.98)
+			];
+			var flightPath = new google.maps.Polyline({
+			    path: flightPlanCoordinates,
+			    strokeColor: '#5c3977',
+			    strokeOpacity: 1.0,
+			    strokeWeight: 2
+			});
+			
+			_paths[package_obj.trackingNumber] = flightPath;
+			flightPath.setMap(_map);
 		}
 	}
 	
@@ -383,11 +404,6 @@ pp.dash = function(){
 				_updatePackages(datas);
 				
 				/*
-				 * Filter the packages
-				 */
-				_filterPackages();
-				
-				/*
 				 * Initial map drawing
 				 */
 				var opt = {
@@ -414,45 +430,15 @@ pp.dash = function(){
 		
 		/**
 		 * Draw the package path's on the screen
-		 * 
-		 * @param map - google map reference
 		 */
 		setPackagePath: function(){
 			
-			/*
-			 * Get the flight paths
-			 */
-			var flightPlanCoordinates = [
- 				new google.maps.LatLng(35.65, -105.15),
- 				new google.maps.LatLng(37.77, -99.97),
- 			    new google.maps.LatLng(41.90, -87.65)
- 			];
- 			var flightPath = new google.maps.Polyline({
- 			    path: flightPlanCoordinates,
- 			    strokeColor: '#5c3977',
- 			    strokeOpacity: 1.0,
- 			    strokeWeight: 2
- 			});
-
- 			_paths['123456789102'] = flightPath;
- 			flightPath.setMap(_map);
- 			
- 			/*
- 			 * Make another one
- 			 */
- 			var upsCoordinates = [
- 				new google.maps.LatLng(34.05, -118.24),
- 				new google.maps.LatLng(39.74, -104.98)
- 			];
- 			var upsPath = new google.maps.Polyline({
- 			    path: upsCoordinates,
- 			    strokeColor: '#5C3317',
- 			    strokeOpacity: 1.0,
- 			    strokeWeight: 2
- 			});
- 			
- 			_paths['223456789122'] = upsPath;
- 			upsPath.setMap(_map);
+			//draw all of the package paths
+			var keys = Object.keys(_packages);
+			var idx;
+			for(idx = 0; idx < keys.length; idx++) {
+				pp.dash.drawPath(_packages[keys[idx]], true);
+			}
 		},
 		
 		/**
@@ -467,6 +453,7 @@ pp.dash = function(){
 				/*
 				 * Draw the polyline
 				 */
+				_drawPolyline(packobj);
 				
 				/*
 				 * Draw the markers
