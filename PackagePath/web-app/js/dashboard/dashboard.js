@@ -15,6 +15,7 @@ pp.dash = function(){
 	var _f_Destination;			//map of the destination
 	var _f_Days;				//map of the days
 	var _f_Carrier;				//map of the carriers
+	var _f_Carriers_to_Days;	//map of the carriers to days ['fedex', [date1, date2, etc]]
 	
 	/*
 	 * jQuery variables
@@ -63,6 +64,7 @@ pp.dash = function(){
 		_packages = new Object();
 		_f_Carrier = new Object();		// ['ups', [number1, number2, etc]]
 		_f_Days = new Object();			// ['05/22/2013', [number1, number2, etc]]
+		_f_Carriers_to_Days = new Object();	//['fedex', [date1, date2, etc]]
 		
 		/*
 		 * Iterate the response
@@ -105,6 +107,21 @@ pp.dash = function(){
 			
 			//set the list of tracking numbers for that day
 			_f_Days[pack_obj.endTransitDate] = days_nums;
+			
+			/*
+			 * Map the carriers to the days
+			 */
+			var carrier_to_days = [];
+			if (pack_obj.shippingService in _f_Carriers_to_Days) {
+				
+				//get the existing list
+				carrier_to_days = _f_Carriers_to_Days[pack_obj.shippingService];
+			}
+			//add to the list
+			carrier_to_days.push(pack_obj.endTransitDate);
+			
+			//set the list of days to the carrier
+			_f_Carriers_to_Days[pack_obj.shippingService] = carrier_to_days;
 			
 		});
 		
@@ -186,11 +203,6 @@ pp.dash = function(){
 		* Parse an existing JSON data structure with a XSLT template
 		*/
 		Stapling.parse(filtersource, '/PackagePath/js/stapling/templates/filter.xslt', function (xml) {
-
-			if (console && console.log) {
-				console.log("XML-document: ", xml);
-			}
-
 			_$form_map_filter.html(this);
 		});
 	}
@@ -221,6 +233,7 @@ pp.dash = function(){
 		 */
 		_$form_map_filter.on('click', "input.filter-direction", function(){
 
+			//_updateCarrierFilterDisplay(_f_Carrier[carrier], $this);
 		});
 		
 		/*
@@ -232,7 +245,9 @@ pp.dash = function(){
 			//get the carrier
 			var carrier = $this.val();
 
-			_filterPackages(_f_Carrier[carrier], $this.prop('checked'));
+			_filterPackages(_f_Carrier[carrier], $this);
+			
+			_updateDaysFilterDisplay(_f_Carrier[carrier], $this);
 		});
 		
 		/*
@@ -243,9 +258,10 @@ pp.dash = function(){
 			
 			//get the unformatted date
 			var endDate = $this.val();
-			endDate = endDate.substring(0,2) + '/' + endDate.substring(2, 4) + "/" + endDate.substring(4);
 
-			_filterPackages(_f_Days[endDate], $this.prop('checked'));
+			_filterPackages(_f_Days[endDate], $this);
+			
+			_updateTrackingNumbersFilterDisplay(_f_Days[endDate], $this);
 		});
 		
 		/*
@@ -259,17 +275,17 @@ pp.dash = function(){
 			var filterArray = [];
 			filterArray.push(id);
 			
-			_filterPackages(filterArray, $this.prop('checked'));
+			_filterPackages(filterArray, $this);
 		});
 	}
 	
 	/**
 	 * This method will be responsible for filtering the packages on the screen
 	 */
-	function _filterPackages(num_array, add){
+	function _filterPackages(num_array, $this){
 		var idx;
 		for(idx = 0; idx < num_array.length; idx++) {
-			pp.dash.drawPath(_packages[num_array[idx]], add);
+			pp.dash.drawPath(_packages[num_array[idx]], $this);
 		}
 	}
 	
@@ -291,7 +307,7 @@ pp.dash = function(){
 			    path: flightPlanCoordinates,
 			    strokeColor: '#5C3317',
 			    strokeOpacity: 1.0,
-			    strokeWeight: 2
+			    strokeWeight: 3
 			});
 	
 			_paths[package_obj.trackingNumber] = flightPath;
@@ -309,11 +325,66 @@ pp.dash = function(){
 			    path: flightPlanCoordinates,
 			    strokeColor: '#5c3977',
 			    strokeOpacity: 1.0,
-			    strokeWeight: 2
+			    strokeWeight: 3
 			});
 			
 			_paths[package_obj.trackingNumber] = flightPath;
 			flightPath.setMap(_map);
+		}
+	}
+	
+	/**
+	 * Update the days filter display based on the tracking numbers
+	 * 
+	 * @param num_array - package object
+	 * @param $this - are we adding a tracking number or not?
+	 */
+	function _updateDaysFilterDisplay(num_array, $this){
+
+		/*
+		 * Find the unique days for filtering
+		 */
+		var idx, jdx;
+		var day_keys = Object.keys(_f_Days);
+		var tracking_num;
+		var remove_day;
+		if($this.prop("checked")){
+			
+		}
+		else{
+			for(idx = 0; idx < day_keys.length; idx++) {
+				remove_day = true;
+				var days_nums = _f_Days[days_keys[idx]];
+				
+				for(jdx = 0; jdx < days_nums.length; jdx++) {
+					tracking_num = days_nums[jdx];
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Update the tracking Numbers filter display based on the tracking numbers
+	 * 
+	 * @param num_array - tracking numbers
+	 * @param $this - are we adding a tracking number or not?
+	 */
+	function _updateTrackingNumbersFilterDisplay(num_array, $this){
+		var addingTracking = $this.prop("checked");
+		var idx;
+		var $tn;
+		for(idx = 0; idx < num_array.length; idx++) {
+			$tn = $("#f_" + num_array[idx]);
+			if(addingTracking){
+				$tn.parent().removeClass('disabled');
+				$tn.prop('checked', true);
+				$tn.prop('disabled', false);
+			}
+			else{
+				$tn.parent().addClass('disabled');
+				$tn.prop('checked', false);
+				$tn.prop('disabled', true);
+			}
 		}
 	}
 	
@@ -437,7 +508,11 @@ pp.dash = function(){
 			var keys = Object.keys(_packages);
 			var idx;
 			for(idx = 0; idx < keys.length; idx++) {
-				pp.dash.drawPath(_packages[keys[idx]], true);
+				
+				/*
+				 * Draw the polyline
+				 */
+				_drawPolyline(_packages[keys[idx]]);
 			}
 		},
 		
@@ -445,20 +520,20 @@ pp.dash = function(){
 		 * Draw the path
 		 * 
 		 * @param packobj - the object that needs to be drawn
-		 * @param add - boolean to decide if we are adding or removing
+		 * @param $this - the jquery object that was clicked
 		 */
-		drawPath: function(packobj, add){
+		drawPath: function(packobj, $this){
 			
-			if(add){
+			if($this.prop('checked')){
 				/*
-				 * Draw the polyline
+				 * Assuming the tracking number is already drawn.  Just put it back on the map
 				 */
-				_drawPolyline(packobj);
+				_paths[packobj.trackingNumber].setMap(_map);
 				
 				/*
 				 * Draw the markers
 				 */
-				pp.dash.setMarkers(packobj);
+				//pp.dash.setMarkers(packobj);
 			}
 			else{
 				/*
@@ -469,7 +544,7 @@ pp.dash = function(){
 				/*
 				 * Clear the markers
 				 */
-				_markers[packobj.trackingNumber].setMap(null);
+				//_markers[packobj.trackingNumber].setMap(null);
 			}
 		},
 		
