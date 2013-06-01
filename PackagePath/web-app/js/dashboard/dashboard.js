@@ -379,8 +379,8 @@ pp.dash = function(){
 			day_key = day_keys[idx];
 			$f_day = $("#f_" + day_key);
 			
-			//if its enabled and no longer part of the checked days, disable it
-			if($f_day.prop('checked') && $.inArray(day_key, days_array) < 0){
+			//if its no longer part of the checked days, disable it
+			if($.inArray(day_key, days_array) < 0){
 				$f_day.prop('checked', false);
 				$f_day.prop('disabled', true);
 				$f_day.parent().addClass("disabled");
@@ -406,13 +406,11 @@ pp.dash = function(){
 		for(idx = 0; idx < days_array.length; idx++) {
 			day_key = days_array[idx];
 			$f_day = $("#f_" + day_key);
-				
-			//if that day is disabled, compare tracking numbers to see if we should enable it
-			if($f_day.prop("disabled")){
-				$f_day.prop('disabled', false);
-				$f_day.prop('checked', true);
-				$f_day.parent().removeClass("disabled").addClass("active");
-			}
+			
+			//set for enabling
+			$f_day.prop('disabled', false);
+			$f_day.prop('checked', true);
+			$f_day.parent().removeClass("disabled").addClass("active");
 		}
 	}
 	
