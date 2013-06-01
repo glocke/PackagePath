@@ -10,6 +10,7 @@ pp.dash = function(){
 	 */
 	var _packages;				//map of packages ['tracking #'] = package
 	var _map;					//reference to the google map
+	var _geocoder;				//reference to the geocoder
 	var _paths = [];			//all of the existing paths ['tracking #'] = path
 	var _markers = [];			//all of the markers ['tracking #']
 	var _f_Destination;			//map of the destination
@@ -28,6 +29,11 @@ pp.dash = function(){
 		'label.ups': "UPS",
 		'label.usps': "USPS"
 	};
+	
+	var _lineColor = {
+		'ups': "#5C3317",
+		'fedex': "#5c3977"
+	}
 	
 	//google map styles
 	var _map_style = [
@@ -324,43 +330,38 @@ pp.dash = function(){
 	 */
 	function _drawPolyline(package_obj){
 		
-		if (package_obj.trackingNumber === '123456789102'){
-			/*
-			 * Get the flight paths
-			 */
-			var flightPlanCoordinates = [
-				new google.maps.LatLng(35.65, -105.15),
-				new google.maps.LatLng(37.77, -99.97),
-			    new google.maps.LatLng(41.90, -87.65)
-			];
-			var flightPath = new google.maps.Polyline({
-			    path: flightPlanCoordinates,
-			    strokeColor: '#5C3317',
-			    strokeOpacity: 1.0,
-			    strokeWeight: 3
-			});
-	
-			_paths[package_obj.trackingNumber] = flightPath;
-			flightPath.setMap(_map);
-		}
-		else{
-			/*
-			 * Make another one
-			 */
-			var flightPlanCoordinates = [
-				new google.maps.LatLng(34.05, -118.24),
-				new google.maps.LatLng(39.74, -104.98)
-			];
-			var flightPath = new google.maps.Polyline({
-			    path: flightPlanCoordinates,
-			    strokeColor: '#5c3977',
-			    strokeOpacity: 1.0,
-			    strokeWeight: 3
-			});
-			
-			_paths[package_obj.trackingNumber] = flightPath;
-			flightPath.setMap(_map);
-		}
+		//these are asynchronous and need to be changed so that order is maintained... nastiness but i'm not sure what the h to do right now
+		var flightPlanCoordinates = [];
+		_geocoder.geocode( { 'address': package_obj.startZip}, function(results, status) {
+			if (status == google.maps.GeocoderStatus.OK) {
+				flightPlanCoordinates.push(results[0].geometry.location);
+				
+				_geocoder.geocode( { 'address': package_obj.currentZip}, function(results, status) {
+					if (status == google.maps.GeocoderStatus.OK) {
+						flightPlanCoordinates.push(results[0].geometry.location);
+						
+						_geocoder.geocode( { 'address': package_obj.endZip}, function(results, status) {
+							if (status == google.maps.GeocoderStatus.OK) {
+								flightPlanCoordinates.push(results[0].geometry.location);
+								
+								var flightPath = new google.maps.Polyline({
+								    path: flightPlanCoordinates,
+								    strokeColor: _lineColor[package_obj.shippingService],
+								    strokeOpacity: 1.0,
+								    strokeWeight: 3
+								});
+						
+								_paths[package_obj.trackingNumber] = flightPath;
+								flightPath.setMap(_map);
+							}
+						});
+					}
+				});
+			}
+			else{
+				alert('wtf');
+			}
+		});
 	}
 	
 	/**
@@ -470,6 +471,9 @@ pp.dash = function(){
 			//set the form reference
 			_$form_map_filter = $("#form_map_filter");
 			
+			//initialize the geocoder
+			_geocoder = new google.maps.Geocoder();
+			
 			/*
 			 * Bind the filtering events.  We shouldn't have to bind after each ajax call if
 			 * we bind to the form and not the input
@@ -483,47 +487,15 @@ pp.dash = function(){
 		createMap: function(){
 			
 			$.ajax({
-				  url: "/PackagePath/package/testTracker?type=ups&trackingNumber=1Z12345E1512345676",
+				  url: "/PackagePath/dashboard/retrievePackages",
 				  beforeSend: function ( xhr ){},
 				  dataType: "json"
 			}).done(function (data, textStatus, jqXHR) {
 				
 				/*
-				 * TESTING!
-				 */
-				var datas = [
-				    	{"class":"packagepath.Package",
-				    		"id":null,
-				    		"currentPackageStatus":"",
-				    		"currentZip":"",
-				    		"endTransitDate":"05/12/2013",
-				    		"endZip":"",
-				    		"estimatedEndTransitDate":null,
-				    		"inTransit":true,
-				    		"shippingService":"ups",
-				    		"startTransitDate":null,
-				    		"startZip":"",
-				    		"trackingNumber":"123456789102",
-				    		"user":null},
-				    		{"class":"packagepath.Package",
-				    		"id":null,
-				    		"currentPackageStatus":"",
-				    		"currentZip":"",
-				    		"endTransitDate":"05/12/2013",
-				    		"endZip":"",
-				    		"estimatedEndTransitDate":null,
-				    		"inTransit":true,
-				    		"shippingService":"fedex",
-				    		"startTransitDate":null,
-				    		"startZip":"",
-				    		"trackingNumber":"223456789122",
-				    		"user":null}
-				    	];
-				
-				/*
 				 * Update the packages
 				 */
-				_updatePackages(datas);
+				_updatePackages(data);
 				
 				/*
 				 * Initial map drawing
