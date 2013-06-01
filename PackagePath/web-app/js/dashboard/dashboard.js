@@ -63,7 +63,7 @@ pp.dash = function(){
 		
 		_packages = new Object();
 		_f_Carrier = new Object();		// ['ups', [number1, number2, etc]]
-		_f_Days = new Object();			// ['05/22/2013', [number1, number2, etc]]
+		_f_Days = new Object();			// ['05222013', [number1, number2, etc]]
 		_f_Carriers_to_Days = new Object();	//['fedex', [date1, date2, etc]]
 		
 		/*
@@ -97,16 +97,17 @@ pp.dash = function(){
 			 * Find the unique days for filtering
 			 */
 			var days_nums = [];
-			if (pack_obj.endTransitDate in _f_Days) {
+			var unformattedDay = pack_obj.endTransitDate.replace(/\//g,'')
+			if (unformattedDay in _f_Days) {
 				
 				//get the existing list
-				days_nums = _f_Days[pack_obj.endTransitDate];
+				days_nums = _f_Days[unformattedDay];
 			}
 			//add to the list
 			days_nums.push(tracking_number);
 			
 			//set the list of tracking numbers for that day
-			_f_Days[pack_obj.endTransitDate] = days_nums;
+			_f_Days[unformattedDay] = days_nums;
 			
 			/*
 			 * Map the carriers to the days
@@ -118,7 +119,7 @@ pp.dash = function(){
 				carrier_to_days = _f_Carriers_to_Days[pack_obj.shippingService];
 			}
 			//add to the list
-			carrier_to_days.push(pack_obj.endTransitDate);
+			carrier_to_days.push(pack_obj.endTransitDate.replace(/\//g,''));
 			
 			//set the list of days to the carrier
 			_f_Carriers_to_Days[pack_obj.shippingService] = carrier_to_days;
@@ -177,6 +178,7 @@ pp.dash = function(){
 		var days = [];
 		var days_obj = {};
 		var day_keys = Object.keys(_f_Days);
+		var unformattedDate;
 		for(idx = 0; idx < day_keys.length; idx++) {
 			days_obj = {};
 			days_obj.name = day_keys[idx];
@@ -245,9 +247,35 @@ pp.dash = function(){
 			//get the carrier
 			var carrier = $this.val();
 
+			//filter the packages that are displayed on the map
 			_filterPackages(_f_Carrier[carrier], $this);
 			
-			_updateDaysFilterDisplay(_f_Carrier[carrier], $this);
+			
+			//if we are going to disable days, we need to get all of the existing carrier numbers that are not checked
+			if(!$this.prop('checked')){
+				//get all of the checked carrier tracking numbers
+				var carrier_keys = Object.keys(_f_Carrier);
+				var carrier_key;
+				var $carrier_key;
+				var carrier_days = [];
+				var idx;
+				for(idx = 0; idx < carrier_keys.length; idx++) {
+					carrier_key = carrier_keys[idx];
+					$carrier_key = $("#f_" + carrier_key);
+
+					if($carrier_key.prop('checked')){
+						carrier_days = carrier_days.concat(_f_Carriers_to_Days[carrier_key]);
+					}
+				}
+				//pass in all of the checked carrier days that way we can disable the day if none are no longer used
+				_disableDaysFromCarriers(carrier_days, $this);
+			}
+			else{
+				//update the filter display
+				_enableDaysFromCarriers(_f_Carriers_to_Days[carrier], $this);
+			}
+			
+			_updateTrackingNumbersFilterDisplay(_f_Carrier[carrier], $this);
 		});
 		
 		/*
@@ -259,8 +287,10 @@ pp.dash = function(){
 			//get the unformatted date
 			var endDate = $this.val();
 
+			//filter the packages that are displayed on the map
 			_filterPackages(_f_Days[endDate], $this);
 			
+			//update the filter display
 			_updateTrackingNumbersFilterDisplay(_f_Days[endDate], $this);
 		});
 		
@@ -334,31 +364,54 @@ pp.dash = function(){
 	}
 	
 	/**
+	 * Update the days display when a carrier is unchecked
+	 * 
+	 * @param days_array - all days that are associated to a checked carrier
+	 * @param $this
+	 */
+	function _disableDaysFromCarriers(days_array, $this){
+		
+		//iterate all days and see if that day should be checked
+		var day_keys = Object.keys(_f_Days);
+		var $f_day;
+		var day_key;
+		for(idx = 0; idx < day_keys.length; idx++) {
+			day_key = day_keys[idx];
+			$f_day = $("#f_" + day_key);
+			
+			//if its enabled and no longer part of the checked days, disable it
+			if($f_day.prop('checked') && $.inArray(day_key, days_array) < 0){
+				$f_day.prop('checked', false);
+				$f_day.prop('disabled', true);
+				$f_day.parent().addClass("disabled");
+			}
+		}
+	}
+	
+	/**
 	 * Update the days filter display based on the tracking numbers
 	 * 
-	 * @param num_array - package object
+	 * @param days_array - the days ['05/22/2013', etc]
 	 * @param $this - are we adding a tracking number or not?
 	 */
-	function _updateDaysFilterDisplay(num_array, $this){
+	function _enableDaysFromCarriers(days_array, $this){
 
 		/*
 		 * Find the unique days for filtering
 		 */
-		var idx, jdx;
-		var day_keys = Object.keys(_f_Days);
-		var tracking_num;
-		var remove_day;
-		if($this.prop("checked")){
-			
-		}
-		else{
-			for(idx = 0; idx < day_keys.length; idx++) {
-				remove_day = true;
-				var days_nums = _f_Days[days_keys[idx]];
+		var idx;
+
+		var $f_day;
+		var day_key;
+		for(idx = 0; idx < days_array.length; idx++) {
+			day_key = days_array[idx];
+			$f_day = $("#f_" + day_key);
 				
-				for(jdx = 0; jdx < days_nums.length; jdx++) {
-					tracking_num = days_nums[jdx];
-				}
+			//if that day is disabled, compare tracking numbers to see if we should enable it
+			if($f_day.prop("disabled")){
+				$f_day.prop('disabled', false);
+				$f_day.prop('checked', true);
+				$f_day.parent().removeClass("disabled").addClass("active");
 			}
 		}
 	}
