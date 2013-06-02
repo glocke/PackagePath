@@ -31,6 +31,7 @@
 			<section>
 				<h2>This is our new home page.</h2>
 	     	</section>
+	     	<oauth:connect provider="google">Connect to Google</oauth:connect>
 	    </div>
 	</body>
 </html>
