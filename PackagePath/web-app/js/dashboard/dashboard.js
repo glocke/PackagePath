@@ -103,7 +103,7 @@ pp.dash = function(){
 			 * Find the unique days for filtering
 			 */
 			var days_nums = [];
-			var unformattedDay = pack_obj.endTransitDate.replace(/\//g,'')
+			var unformattedDay = pack_obj.endTransitDate.substring(0, 10).replace(/\//g,'');
 			if (unformattedDay in _f_Days) {
 				
 				//get the existing list
@@ -125,7 +125,7 @@ pp.dash = function(){
 				carrier_to_days = _f_Carriers_to_Days[pack_obj.shippingService];
 			}
 			//add to the list
-			carrier_to_days.push(pack_obj.endTransitDate.replace(/\//g,''));
+			carrier_to_days.push(pack_obj.endTransitDate.substring(0, 10).replace(/\//g,''));
 			
 			//set the list of days to the carrier
 			_f_Carriers_to_Days[pack_obj.shippingService] = carrier_to_days;
