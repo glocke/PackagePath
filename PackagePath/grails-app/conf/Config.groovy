@@ -89,3 +89,21 @@ log4j = {
            'org.hibernate',
            'net.sf.ehcache.hibernate'
 }
+
+oauth {
+	providers {
+		google {
+			api = org.scribe.builder.api.GoogleApi
+			key = '804049061572.apps.googleusercontent.com'
+			secret = 'KhnpQl-KDr6Wnq3AENDpIa-f'
+			scope = 'https://mail.google.com/mail/feed/atom'
+			successUri = '/dashboard/index'
+			failureUri = '/login/denied'
+			callback = "http://localhost:8080/PackagePath/oauth/google/callback"
+		}
+	}
+	
+	debug = true
+	connectTimeout = 5000
+	receiveTimeout = 5000
+}
