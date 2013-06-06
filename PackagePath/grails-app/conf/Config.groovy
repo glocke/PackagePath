@@ -96,7 +96,7 @@ oauth {
 			api = org.scribe.builder.api.GoogleApi
 			key = '804049061572.apps.googleusercontent.com'
 			secret = 'KhnpQl-KDr6Wnq3AENDpIa-f'
-			scope = 'https://mail.google.com/mail/feed/atom'
+			scope = 'https://mail.google.com/'
 			successUri = '/dashboard/index'
 			failureUri = '/login/denied'
 			callback = "http://localhost:8080/PackagePath/oauth/google/callback"

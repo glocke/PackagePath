@@ -2,7 +2,19 @@ package packagepath
 
 import grails.converters.JSON
 
+import org.scribe.model.OAuthRequest
+import org.scribe.model.Response
+import org.scribe.model.Token
+import org.scribe.model.Verb
+
+import uk.co.desirableobjects.oauth.scribe.OauthService
+
 class DashboardController {
+	
+	/*
+	 * Variables
+	 */
+	OauthService oauthService = new OauthService()// TODO: change to spring injection
 
 	/**
 	 * Load the main dashboard screen
@@ -17,6 +29,10 @@ class DashboardController {
 	 * @return
 	 */
 	def retrievePackages() {
+		
+		String sessionKey = oauthService.findSessionKeyForAccessToken('google')
+		Token token = session[sessionKey]
+		def response = oauthService.getGoogleResource(token, 'https://mail.google.com/')
 		
 		/*
 		 * Get a map of tracking numbers for each carrier for the email address
