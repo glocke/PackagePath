@@ -27,7 +27,7 @@ class UPSService {
 						'<RequestAction>Track</RequestAction>' +
 						'<RequestOption>activity</RequestOption>' +
 					'</Request>' +
-					'<TrackingNumber>' + trackingNumber + '</TrackingNumber>' +
+					'<TrackingNumber>' + trackingNumber.value + '</TrackingNumber>' +
 				'</TrackRequest>'
 			
 			// for testing purposes
