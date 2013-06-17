@@ -34,10 +34,10 @@ public class OAuth2SaslClientFactory implements SaslClientFactory {
       Logger.getLogger(OAuth2SaslClientFactory.class.getName());
 
   public static final String OAUTH_TOKEN_PROP =
-      "mail.imaps.sasl.mechanisms.oauth2.oauthToken";
+      "mail.gimaps.sasl.mechanisms.oauth2.oauthToken";
   
   public static final String OAUTH_TOKEN_SECRET_PROP =
-	      "mail.imaps.sasl.mechanisms.xoauth.oauthTokenSecret";
+	      "mail.gimaps.sasl.mechanisms.xoauth.oauthTokenSecret";
 
   public SaslClient createSaslClient(String[] mechanisms,
                                      String authorizationId,

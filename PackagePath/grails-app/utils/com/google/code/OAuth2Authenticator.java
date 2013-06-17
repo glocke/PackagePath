@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import javax.mail.Session;
 import javax.mail.URLName;
 
+import com.sun.mail.gimap.GmailSSLStore;
 import com.sun.mail.imap.IMAPSSLStore;
 import com.sun.mail.imap.IMAPStore;
 import com.sun.mail.smtp.SMTPTransport;
@@ -71,32 +72,28 @@ public class OAuth2Authenticator {
    *
    * @return An authenticated IMAPStore that can be used for IMAP operations.
    */
-  public static IMAPStore connectToImap(String host,
+  public static GmailSSLStore connectToImap(String host,
                                         int port,
                                         String userEmail,
                                         String oauthToken,
-                                        String oauthTokenSecret,
                                         boolean debug) throws Exception {
     Properties props = new Properties();
+
+    props.setProperty("mail.store.protocol", "gimaps");
+    props.setProperty("mail.gimaps.sasl.enable", "true");
+    props.setProperty("mail.gimaps.sasl.mechanisms", "XOAUTH2");
+    props.setProperty(OAuth2SaslClientFactory.OAUTH_TOKEN_PROP, oauthToken);
     
     /*
      * RUNNING LOCALLY ONLY!
      */
-    props.put("mail.imaps.ssl.trust", "*");
-    props.put("mail.imaps.ssl.checkserveridentity", "false");
-    
-    props.put("mail.imaps.sasl.enable", "true");
-    props.put("mail.imaps.sasl.mechanisms", "XOAUTH2");
-    props.put(OAuth2SaslClientFactory.OAUTH_TOKEN_PROP, oauthToken);
-    
-    //added to see if it helped, does not
-    props.put(OAuth2SaslClientFactory.OAUTH_TOKEN_SECRET_PROP, oauthTokenSecret);
+    props.setProperty("mail.gimaps.ssl.trust", "*");
+	props.setProperty("mail.gimaps.ssl.checkserveridentity", "false");
     
     Session session = Session.getInstance(props);
     session.setDebug(debug);
 
-    final URLName unusedUrlName = null;
-    IMAPSSLStore store = new IMAPSSLStore(session, unusedUrlName);
+    GmailSSLStore store = (GmailSSLStore) session.getStore("gimaps");
     final String emptyPassword = "";
     store.connect(host, port, userEmail, emptyPassword);
     return store;
@@ -151,7 +148,6 @@ public class OAuth2Authenticator {
     }
     String email = args[0];
     String oauthToken = args[1];
-    String oauthTokenPassword = args[2];
 
     initialize();
 
@@ -159,7 +155,6 @@ public class OAuth2Authenticator {
                                         993,
                                         email,
                                         oauthToken,
-                                        oauthTokenPassword,
                                         true);
     System.out.println("Successfully authenticated to IMAP.\n");
     SMTPTransport smtpTransport = connectToSmtp("smtp.gmail.com",
