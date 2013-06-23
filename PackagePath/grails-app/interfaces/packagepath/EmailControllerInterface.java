@@ -1,5 +1,6 @@
 package packagepath;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -14,6 +15,6 @@ public interface EmailControllerInterface {
 	 * 
 	 * @return Set of tracking numbers
 	 */
-	public Set<String> retrieveTrackingNumbers();
+	public Map<String, Set<String>> retrieveTrackingNumbers();
 	
 }

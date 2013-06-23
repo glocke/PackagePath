@@ -24,7 +24,7 @@ class DashboardController {
 		/*
 		 * Get a map of tracking numbers for each carrier for the email address
 		 */
-		Set<String> trackingNumbersMap = emailController.retrieveTrackingNumbers();
+		Map<String, Set<String>> trackingNumbersMap = emailController.retrieveTrackingNumbers();
 		
 		/*
 		 * Call the package controller to get a list of packages
