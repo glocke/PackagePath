@@ -41,11 +41,9 @@ class GMailController implements EmailControllerInterface{
 	/*
 	 * Global search string
 	 */
-	private static String searchString = "newer_than:14d (fedex OR ups OR usps)";
+	private static String searchString = "in:anywhere newer_than:14d (fedex OR ups OR usps)";
 	
 	static{
-		
-		
 		
 		//fedex
 		FEDEX_REGEX_LIST.add(/(\b96\d{20}\b)|(\b\d{15}\b)|(\b\d{12}\b)/);
@@ -105,7 +103,7 @@ class GMailController implements EmailControllerInterface{
 		//props.setProperty("mail.gimaps.ssl.trust", "*");
 		//props.setProperty("mail.gimaps.ssl.checkserveridentity", "false");
 		//Session session = Session.getDefaultInstance(props, null);
-		//GmailSSLStore  store = (GmailSSLStore) session.getStore("gimaps");
+		//GmailSSLStore store = (GmailSSLStore) session.getStore("gimaps");
 		//store.connect("imap.gmail.com", userEmail, userPassword);					
 		
         GmailFolder folder = null;
@@ -114,7 +112,7 @@ class GMailController implements EmailControllerInterface{
 			/*
 			 * Search all of their folders... what if they have a 'shipping folder'
 			 */
-			GmailFolder[] folders = ((GmailFolder[])store.getDefaultFolder().list());
+			GmailFolder fd = store.getFolder("[Gmail]/All Mail");
 			
 			def ups_regex = UPS_REGEX_LIST[0];
 			
@@ -123,60 +121,58 @@ class GMailController implements EmailControllerInterface{
 			 */
 			GmailRawSearchTerm rawTerm = new GmailRawSearchTerm(searchString);
 			
-			for(GmailFolder fd : folders){
-				if (fd != null) {
-	                /*
-	                 *  Create GMail raw search term and use it to search in folder 
-	                 */
-	                fd.open(Folder.READ_ONLY);
-	                Message[] messagesFound = fd.search(rawTerm);
-					GmailMessage gm;
+			if (fd != null) {
+                /*
+                 *  Create GMail raw search term and use it to search in folder 
+                 */
+                fd.open(Folder.READ_ONLY);
+                Message[] messagesFound = fd.search(rawTerm);
+				GmailMessage gm;
+				
+				/*
+				 * Iterate the messages found
+				 */
+                for(Message message : messagesFound){
 					
 					/*
-					 * Iterate the messages found
+					 * Get the gmail message
 					 */
-	                for(Message message : messagesFound){
-						
-						/*
-						 * Get the gmail message
-						 */
-						gm = (GmailMessage)message;
-						
-						/*
-						 * Get the body content
-						 */
-						StringWriter writer = new StringWriter();
-						IOUtils.copy(gm.getContentStream(), writer, "UTF-8");
-						String messageBody = writer.toString();
-						
-						/*
-						 * Iterate regex
-						 */
-						Matcher m;
-						FEDEX_REGEX_LIST.each{
-							m = ( messageBody =~ it )
-							for (def i=0; i < m.getCount(); i++) {
-								fedexTrackingNumbers.add(m[i][0])
-							}
+					gm = (GmailMessage)message;
+					
+					/*
+					 * Get the body content
+					 */
+					StringWriter writer = new StringWriter();
+					IOUtils.copy(gm.getContentStream(), writer, "UTF-8");
+					String messageBody = writer.toString();
+					
+					/*
+					 * Iterate regex
+					 */
+					Matcher m;
+					FEDEX_REGEX_LIST.each{
+						m = ( messageBody =~ it )
+						for (def i=0; i < m.getCount(); i++) {
+							fedexTrackingNumbers.add(m[i][0])
 						}
-						
-						UPS_REGEX_LIST.each{
-							m = ( messageBody =~ it )
-							for (def i=0; i < m.getCount(); i++) {
-								upsTrackingNumbers.add(m[i][0])
-							}
+					}
+					
+					UPS_REGEX_LIST.each{
+						m = ( messageBody =~ it )
+						for (def i=0; i < m.getCount(); i++) {
+							upsTrackingNumbers.add(m[i][0])
 						}
-						
-						USPS_REGEX_LIST.each{
-							m = ( messageBody =~ it )
-							for (def i=0; i < m.getCount(); i++) {
-								uspsTrackingNumbers.add(m[i][0])
-							}
+					}
+					
+					USPS_REGEX_LIST.each{
+						m = ( messageBody =~ it )
+						for (def i=0; i < m.getCount(); i++) {
+							uspsTrackingNumbers.add(m[i][0])
 						}
-	                }
-					fd.close(false);
-	            }
-			}
+					}
+                }
+				fd.close(false);
+            }
 		} catch (MessagingException ex) {
 			System.out.println(ex);
 		} finally {
