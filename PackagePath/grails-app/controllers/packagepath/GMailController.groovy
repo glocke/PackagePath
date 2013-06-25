@@ -78,10 +78,10 @@ class GMailController implements EmailControllerInterface{
 		
 		String sessionKey = oauthService.findSessionKeyForAccessToken('google')
 		Token token = session[sessionKey]
-		def response = oauthService.getGoogleResource(token, 'https://www.googleapis.com/userinfo/email?alt=json')
+		def response = oauthService.getGoogleResource(token, 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json')
 		
 		JSONElement json = JSON.parse(response.getBody())
-		String email = json['data'].email
+		String email = json['email']
 		
 		/*
 		 * Get the imap store

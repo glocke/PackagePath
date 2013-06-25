@@ -35,9 +35,6 @@ public class OAuth2SaslClientFactory implements SaslClientFactory {
 
   public static final String OAUTH_TOKEN_PROP =
       "mail.gimaps.sasl.mechanisms.oauth2.oauthToken";
-  
-  public static final String OAUTH_TOKEN_SECRET_PROP =
-	      "mail.gimaps.sasl.mechanisms.xoauth.oauthTokenSecret";
 
   public SaslClient createSaslClient(String[] mechanisms,
                                      String authorizationId,

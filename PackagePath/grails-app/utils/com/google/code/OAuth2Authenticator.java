@@ -24,7 +24,6 @@ import javax.mail.Session;
 import javax.mail.URLName;
 
 import com.sun.mail.gimap.GmailSSLStore;
-import com.sun.mail.imap.IMAPSSLStore;
 import com.sun.mail.imap.IMAPStore;
 import com.sun.mail.smtp.SMTPTransport;
 
@@ -92,8 +91,10 @@ public class OAuth2Authenticator {
     
     Session session = Session.getInstance(props);
     session.setDebug(debug);
-
-    GmailSSLStore store = (GmailSSLStore) session.getStore("gimaps");
+    
+    final URLName unusedUrlName = null;
+    GmailSSLStore store = new GmailSSLStore(session, unusedUrlName);
+    
     final String emptyPassword = "";
     store.connect(host, port, userEmail, emptyPassword);
     return store;
