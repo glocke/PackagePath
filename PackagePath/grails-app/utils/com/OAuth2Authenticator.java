@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.google.code;
+package com;
 
 import java.security.Provider;
 import java.security.Security;
@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 import javax.mail.Session;
 import javax.mail.URLName;
 
-import com.sun.mail.gimap.GmailSSLStore;
+import com.sun.mail.imap.IMAPSSLStore;
 import com.sun.mail.smtp.SMTPTransport;
 
 /**
@@ -34,17 +34,14 @@ import com.sun.mail.smtp.SMTPTransport;
  * OAuth2 SASL provider.
  */
 public class OAuth2Authenticator {
-	private static final Logger logger = Logger
-			.getLogger(OAuth2Authenticator.class.getName());
+	private static final Logger logger = Logger.getLogger(OAuth2Authenticator.class.getName());
 
 	public static final class OAuth2Provider extends Provider {
 		private static final long serialVersionUID = 1L;
 
 		public OAuth2Provider() {
-			super("Google OAuth2 Provider", 1.0,
-					"Provides the XOAUTH2 SASL Mechanism");
-			put("SaslClientFactory.XOAUTH2",
-					"com.google.code.OAuth2SaslClientFactory");
+			super("Imap OAuth2 Provider", 1.0, "Provides the XOAUTH2 SASL Mechanism");
+			put("SaslClientFactory.XOAUTH2", "com.OAuth2SaslClientFactory");
 		}
 	}
 
@@ -75,27 +72,27 @@ public class OAuth2Authenticator {
 	 * 
 	 * @return An authenticated IMAPStore that can be used for IMAP operations.
 	 */
-	public static GmailSSLStore connectToImap(String host, int port,
+	public static IMAPSSLStore connectToImap(String host, int port,
 			String userEmail, String oauthToken, boolean debug)
 			throws Exception {
 		Properties props = new Properties();
 
-		props.setProperty("mail.store.protocol", "gimaps");
-		props.setProperty("mail.gimaps.sasl.enable", "true");
-		props.setProperty("mail.gimaps.sasl.mechanisms", "XOAUTH2");
+		props.setProperty("mail.store.protocol", "imap");
+		props.setProperty("mail.imaps.sasl.enable", "true");
+		props.setProperty("mail.imaps.sasl.mechanisms", "XOAUTH2");
 		props.setProperty(OAuth2SaslClientFactory.OAUTH_TOKEN_PROP, oauthToken);
 
 		/*
 		 * RUNNING LOCALLY ONLY!
 		 */
-		props.setProperty("mail.gimaps.ssl.trust", "*");
-		props.setProperty("mail.gimaps.ssl.checkserveridentity", "false");
+		props.setProperty("mail.imaps.ssl.trust", "*");
+		props.setProperty("mail.imaps.ssl.checkserveridentity", "false");
 
 		Session session = Session.getInstance(props);
 		session.setDebug(debug);
 
 		final URLName unusedUrlName = null;
-		GmailSSLStore store = new GmailSSLStore(session, unusedUrlName);
+		IMAPSSLStore store = new IMAPSSLStore(session, unusedUrlName);
 
 		final String emptyPassword = "";
 		store.connect(host, port, userEmail, emptyPassword);

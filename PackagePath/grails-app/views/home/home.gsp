@@ -32,6 +32,10 @@
 				<h2>This is our new home page.</h2>
 	     	</section>
 	     	<oauth:connect provider="google">Connect to Google</oauth:connect>
+	     	
+	     	<br>
+	     	<br>
+	     	<oauth:connect provider="yahoo">Connect to Yahoo</oauth:connect>
 	    </div>
 	</body>
 </html>

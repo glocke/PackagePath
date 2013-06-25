@@ -8,6 +8,12 @@ import java.util.regex.Pattern
 import javax.mail.Folder
 import javax.mail.Message
 import javax.mail.MessagingException
+import javax.mail.search.AndTerm
+import javax.mail.search.BodyTerm
+import javax.mail.search.ComparisonTerm
+import javax.mail.search.OrTerm
+import javax.mail.search.ReceivedDateTerm
+import javax.mail.search.SearchTerm
 
 import org.apache.commons.io.IOUtils
 import org.codehaus.groovy.grails.web.json.JSONElement
@@ -16,12 +22,10 @@ import org.scribe.model.Token
 import uk.co.desirableobjects.oauth.scribe.OauthService
 
 import com.google.code.OAuth2Authenticator
-import com.sun.mail.gimap.GmailFolder
 import com.sun.mail.gimap.GmailMessage
-import com.sun.mail.gimap.GmailRawSearchTerm
-import com.sun.mail.gimap.GmailSSLStore
+import com.sun.mail.imap.IMAPSSLStore
 
-class GMailController implements EmailControllerInterface{
+class YahooMailController implements EmailControllerInterface{
 	
 	/*
 	 * Variables
@@ -74,7 +78,7 @@ class GMailController implements EmailControllerInterface{
 		Set<String> upsTrackingNumbers = new HashSet<String>();
 		Set<String> uspsTrackingNumbers = new HashSet<String>();
 		
-		String sessionKey = oauthService.findSessionKeyForAccessToken('google')
+		String sessionKey = oauthService.findSessionKeyForAccessToken('yahoo')
 		Token token = session[sessionKey]
 		def response = oauthService.getGoogleResource(token, 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json')
 		
@@ -85,8 +89,8 @@ class GMailController implements EmailControllerInterface{
 		 * Get the imap store
 		 */
 		OAuth2Authenticator.initialize();
-		GmailSSLStore store = OAuth2Authenticator.connectToImap("imap.gmail.com",
-                                       993,
+		IMAPSSLStore store = OAuth2Authenticator.connectToImap("imap.mail.yahoo.com",
+                                       143,
                                         email,
                                         token.getToken(),
                                         true);
@@ -104,73 +108,49 @@ class GMailController implements EmailControllerInterface{
 		//GmailSSLStore store = (GmailSSLStore) session.getStore("gimaps");
 		//store.connect("imap.gmail.com", userEmail, userPassword);					
 		
-        GmailFolder folder = null;
+        Folder folder = null;
 		try {
 			
 			/*
 			 * Search all of their folders... what if they have a 'shipping folder'
 			 */
-			GmailFolder fd = store.getFolder("[Gmail]/All Mail");
-			
-			def ups_regex = UPS_REGEX_LIST[0];
+			Folder[] folders = store.getDefaultFolder().list();
 			
 			/*
-			 * Create one search term
+			 * Search criteria
 			 */
-			GmailRawSearchTerm rawTerm = new GmailRawSearchTerm(searchString);
+			GregorianCalendar pastDate = new GregorianCalendar();
+			pastDate.add(Calendar.DATE, -14);
+			SearchTerm st = new AndTerm(new ReceivedDateTerm(ComparisonTerm.GT, pastDate.getTime()), new OrTerm(new BodyTerm("ups"), new BodyTerm("usps"), new BodyTerm("fedex")));
 			
-			if (fd != null) {
-                /*
-                 *  Create GMail raw search term and use it to search in folder 
-                 */
-                fd.open(Folder.READ_ONLY);
-                Message[] messagesFound = fd.search(rawTerm);
-				GmailMessage gm;
-				
-				/*
-				 * Iterate the messages found
-				 */
-                for(Message message : messagesFound){
+			for(Folder fd : folders){
+				if (fd != null) {
+			   
+					System.out.println("Searching started....");
+				   
+					// Create GMail raw search term and use it to search in folder
+					fd.open(Folder.READ_ONLY);
 					
 					/*
-					 * Get the gmail message
+					 * Search it
 					 */
-					gm = (GmailMessage)message;
-					
-					/*
-					 * Get the body content
-					 */
-					StringWriter writer = new StringWriter();
-					IOUtils.copy(gm.getContentStream(), writer, "UTF-8");
-					String messageBody = writer.toString();
-					
-					/*
-					 * Iterate regex
-					 */
-					Matcher m;
-					FEDEX_REGEX_LIST.each{
-						m = ( messageBody =~ it )
-						for (def i=0; i < m.getCount(); i++) {
-							fedexTrackingNumbers.add(m[i][0])
-						}
+					Message[] messagesFound = fd.search(st);
+				   
+					System.out.println("Total messages found for keyword are = "+messagesFound.length);
+					System.out.println("Messages found are:");
+				   
+					// Process the messages found in search
+					System.out.println("--------------------------------------------");
+					for(Message message : messagesFound){
+						System.out.println("# "+ message.getSubject());
+						message.writeTo(System.out);
 					}
-					
-					UPS_REGEX_LIST.each{
-						m = ( messageBody =~ it )
-						for (def i=0; i < m.getCount(); i++) {
-							upsTrackingNumbers.add(m[i][0])
-						}
-					}
-					
-					USPS_REGEX_LIST.each{
-						m = ( messageBody =~ it )
-						for (def i=0; i < m.getCount(); i++) {
-							uspsTrackingNumbers.add(m[i][0])
-						}
-					}
-                }
-				fd.close(false);
-            }
+					System.out.println("--------------------------------------------");
+	
+					System.out.println("Searching done!");
+					fd.close(false);
+				}
+			}
 		} catch (MessagingException ex) {
 			System.out.println(ex);
 		} finally {
