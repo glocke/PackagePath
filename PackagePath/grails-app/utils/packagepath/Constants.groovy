@@ -6,6 +6,10 @@ class Constants {
 	public static List UPS_REGEX_LIST = new ArrayList<String>();
 	public static List<String> USPS_REGEX_LIST = new ArrayList<String>();
 	
+	public static final String UPS = "ups";
+	public static final String USPS = "usps";
+	public static final String FEDEX = "fedex";
+	
 	static{
 		
 		//fedex

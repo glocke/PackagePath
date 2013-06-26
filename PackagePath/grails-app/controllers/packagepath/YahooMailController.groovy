@@ -50,7 +50,8 @@ class YahooMailController implements EmailControllerInterface{
 		
 		String sessionKey = oauthService.findSessionKeyForAccessToken('yahoo')
 		Token token = session[sessionKey]
-		def response = oauthService.getGoogleResource(token, 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json')
+		def guid = oauthService.getYahooResource(token, 'http://social.yahooapis.com/v1/me/guid')
+		def response = oauthService.getYahooResource(token, 'http://social.yahooapis.com/v1/user/' + guid + '/profile?format=json')
 		
 		JSONElement json = JSON.parse(response.getBody())
 		String email = json['email']
@@ -71,12 +72,12 @@ class YahooMailController implements EmailControllerInterface{
 		//String userEmail = "";
 		//String userPassword = "";
 		//Properties props = System.getProperties();
-		//props.setProperty("mail.store.protocol", "gimaps");
-		//props.setProperty("mail.gimaps.ssl.trust", "*");
-		//props.setProperty("mail.gimaps.ssl.checkserveridentity", "false");
+		//props.setProperty("mail.store.protocol", "imaps");
+		//props.setProperty("mail.imaps.ssl.trust", "*");
+		//props.setProperty("mail.imaps.ssl.checkserveridentity", "false");
 		//Session session = Session.getDefaultInstance(props, null);
-		//GmailSSLStore store = (GmailSSLStore) session.getStore("gimaps");
-		//store.connect("imap.gmail.com", userEmail, userPassword);					
+		//IMAPSSLStore store = (IMAPSSLStore) session.getStore("imaps");
+		//store.connect("imap.mail.yahoo.com", userEmail, userPassword);					
 		
         Folder folder = null;
 		try {
@@ -91,7 +92,7 @@ class YahooMailController implements EmailControllerInterface{
 			 */
 			GregorianCalendar pastDate = new GregorianCalendar();
 			pastDate.add(Calendar.DATE, -14);
-			SearchTerm st = new AndTerm(new ReceivedDateTerm(ComparisonTerm.GT, pastDate.getTime()), new OrTerm(new BodyTerm("ups"), new BodyTerm("usps"), new BodyTerm("fedex")));
+			SearchTerm st = new AndTerm(new ReceivedDateTerm(ComparisonTerm.GT, pastDate.getTime()), new OrTerm(new BodyTerm(Constants.UPS), new BodyTerm(Constants.USPS), new BodyTerm(Constants.FEDEX)));
 			
 			for(Folder fd : folders){
 				if (fd != null) {

@@ -31,9 +31,7 @@ class GMailController implements EmailControllerInterface{
 	/*
 	 * Global search string
 	 */
-	private static String searchString = "in:anywhere newer_than:14d (fedex OR ups OR usps)";
-	
-	
+	private static final String searchString = "in:anywhere newer_than:14d (" + Constants.FEDEX + " OR " + Constants.UPS + " OR " + Constants.USPS + ")";
 
     def index() { }
 
