@@ -31,36 +31,6 @@ class YahooMailController implements EmailControllerInterface{
 	 * Variables
 	 */
 	OauthService oauthService = new OauthService()// TODO: change to spring injection
-	
-	private static List<String> FEDEX_REGEX_LIST = new ArrayList<String>();
-	private static List UPS_REGEX_LIST = new ArrayList<String>();
-	private static List<String> USPS_REGEX_LIST = new ArrayList<String>();
-	
-	static List<Pattern> FEDEX_REG_PATTERNS;
-	static List<Pattern> UPS_REG_PATTERNS;
-	static List<Pattern> USPS_REG_PATTERNS;
-	
-	/*
-	 * Global search string
-	 */
-	private static String searchString = "in:anywhere newer_than:14d (fedex OR ups OR usps)";
-	
-	static{
-		
-		//fedex
-		FEDEX_REGEX_LIST.add(/(\b96\d{20}\b)|(\b\d{15}\b)|(\b\d{12}\b)/);
-		FEDEX_REGEX_LIST.add(/\b((98\d\d\d\d\d?\d\d\d\d|98\d\d) ?\d\d\d\d ?\d\d\d\d( ?\d\d\d)?)\b/);
-		FEDEX_REGEX_LIST.add(/^[0-9]{15}$/);
-		
-		//ups
-		UPS_REGEX_LIST.add(/\b(1Z ?[0-9A-Z]{3} ?[0-9A-Z]{3} ?[0-9A-Z]{2} ?[0-9A-Z]{4} ?[0-9A-Z]{3} ?[0-9A-Z]|[\dT]\d\d\d ?\d\d\d\d ?\d\d\d|\d{22})\b/)
-		
-		//usps
-		USPS_REGEX_LIST.add(/(\b\d{30}\b)|(\b91\d+\b)|(\b\d{20}\b)/);
-		USPS_REGEX_LIST.add(/^E\D{1}\d{9}\D{2}$|^9\d{15,21}$/);
-		USPS_REGEX_LIST.add(/^91[0-9]+$/);
-		USPS_REGEX_LIST.add(/^[A-Za-z]{2}[0-9]+US$/);
-	}
 
     def index() { }
 
@@ -141,9 +111,41 @@ class YahooMailController implements EmailControllerInterface{
 				   
 					// Process the messages found in search
 					System.out.println("--------------------------------------------");
+					
+					Matcher m;
 					for(Message message : messagesFound){
-						System.out.println("# "+ message.getSubject());
-						message.writeTo(System.out);
+						
+						/*
+						 * Get the body content
+						 */
+						StringWriter writer = new StringWriter();
+						IOUtils.copy(message.getContent(), writer, "UTF-8");
+						String messageBody = writer.toString();
+						
+						/*
+						 * Iterate regex
+						 */
+						
+						Constants.FEDEX_REGEX_LIST.each{
+							m = ( messageBody =~ it )
+							for (def i=0; i < m.getCount(); i++) {
+								fedexTrackingNumbers.add(m[i][0])
+							}
+						}
+						
+						Constants.UPS_REGEX_LIST.each{
+							m = ( messageBody =~ it )
+							for (def i=0; i < m.getCount(); i++) {
+								upsTrackingNumbers.add(m[i][0])
+							}
+						}
+						
+						Constants.USPS_REGEX_LIST.each{
+							m = ( messageBody =~ it )
+							for (def i=0; i < m.getCount(); i++) {
+								uspsTrackingNumbers.add(m[i][0])
+							}
+						}
 					}
 					System.out.println("--------------------------------------------");
 	
