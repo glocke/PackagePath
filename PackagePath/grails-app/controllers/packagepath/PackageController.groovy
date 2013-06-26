@@ -14,6 +14,9 @@ class PackageController {
 		if (params.type.equalsIgnoreCase("ups")) {
 			def upsService = new UPSService()
 			p = upsService.getTrackingInfo(params.trackingNumber.toString())
+		} else if (params.type.equalsIgnoreCase("usps")) {
+			def uspsService = new USPSService()
+			p = uspsService.getTrackingInfo(params.trackingNumber.toString())
 		} else {
 			p = new Package()	
 		}

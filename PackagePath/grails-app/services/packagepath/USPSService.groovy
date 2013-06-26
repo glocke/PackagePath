@@ -8,76 +8,57 @@ import java.text.SimpleDateFormat
 import groovyx.net.http.HTTPBuilder
 
 class USPSService {
-
+	private final String USPS_DELIVERED_STATUS = "DELIVERED";
+	
      Package getTrackingInfo(String trackingNumber) {
 		def http = new HTTPBuilder('http://production.shippingapis.com')
 		String xmlRequest = 
-			'<TrackRequest USERID="649PACKA6931">' +
+			'<TrackFieldRequest USERID="649PACKA6931">' +
 				'<TrackID ID="' + trackingNumber + '"></TrackID>' +
-			'</TrackRequest>';
+			'</TrackFieldRequest>';
 		
-		http.get( path : '/ShippingAPITest.dll', query : [API:'TrackV2', XML: xmlRequest] ) {
-			/*body = 
-			    '<AccessRequest>' +
-					'<AccessLicenseNumber>4CB2A17181704496</AccessLicenseNumber>' +
-					'<UserId>packagepath</UserId>' +
-					'<Password>JayWeissExcel2007</Password>' +
-				'</AccessRequest>' +
-				'<TrackRequest>' +
-					'<Request>' +
-						'<TransactionReference>' + 
-							'<CustomerContext>guidlikesubstance</CustomerContext>' +
-							'<XpciVersion>1.0</XpciVersion>' +
-						'</TransactionReference>' +
-						'<RequestAction>Track</RequestAction>' +
-						'<RequestOption>activity</RequestOption>' +
-					'</Request>' +
-					'<TrackingNumber>' + trackingNumber + '</TrackingNumber>' +
-				'</TrackRequest>'*/
+		http.request( GET, XML  ) {
+			uri.path = '/ShippingAPITest.dll'
+			uri.query = [API:'TrackV2', XML: xmlRequest]
 			
-			// for testing purposes
-			resp, xml ->
+			response.success = {resp, xml ->				
+				Package p = new Package()
+				SimpleDateFormat uspsDf = new SimpleDateFormat("MMMM d, yyyy");
 				
-				/*Package p = new Package()
-				p.shippingService = "ups"
-				p.trackingNumber = xml?.Shipment?.Package?.TrackingNumber?.text()
-				p.startZip = xml?.Shipment?.Shipper?.Address?.PostalCode?.text()
-				p.currentZip = xml?.Shipment?.Package?.Activity?.ActivityLocation?.Address?.PostalCode?.text()
-				p.currentPackageStatus = xml?.Shipment?.Package?.Activity?.Status?.StatusType?.Code?.text()
-				p.endZip = xml?.Shipment?.ShipTo?.Address?.PostalCode?.text()
+				p.shippingService = "usps"
+				p.trackingNumber = trackingNumber
+				
+				xml?.TrackInfo?.TrackDetail?.each {  // iterate over each XML 'TrackDetail' element in the response:
+					String strDate = null;
+					p.startZip = it.EventZIPCode?.text()
+					strDate = it.EventDate?.text()
+
+					if (strDate != null) {
+						p.startTransitDate = uspsDf.parse(strDate);
+					}
+				}
+				p.currentZip = xml?.TrackInfo?.TrackSummary?.EventZIPCode?.text()
 				p.inTransit = true
-				if ("D".equals(p.currentPackageStatus)) {
+				String uspsStatus = xml?.TrackInfo?.TrackSummary?.Event?.text() // TODO: shorten to 1 char				
+				if (USPS_DELIVERED_STATUS.equalsIgnoreCase(uspsStatus)) {
 					p.endZip = p.currentZip
 					p.inTransit = false
+					p.currentPackageStatus = Package.STATUS_DELIVERED
 				}
 				
-				SimpleDateFormat upsDf = new SimpleDateFormat("yyyyMMdd");
-				String strDate = null;
-				
-				strDate = xml?.Shipment?.EstimatedDeliveryDetails?.Date?.text()
+				String strDate = null
+				strDate = xml?.TrackInfo?.TrackSummary?.EventDate?.text()
 				if (strDate != null) {
-					p.estimatedEndTransitDate = upsDf.parse(strDate);
-				}
-				// update estimate if a scheduled date is present first
-				strDate = xml?.Shipment?.ScheduledDeliveryDate?.text()
-				if (strDate != null) {
-					p.estimatedEndTransitDate = upsDf.parse(strDate);
+					if (USPS_DELIVERED_STATUS.equalsIgnoreCase(uspsStatus)) {
+						p.endTransitDate = uspsDf.parse(strDate);
+					}					
 				}
 				
-				return p*/
-				
-				println "response status: ${resp.statusLine}"
-				println 'Headers: -----------'
-				resp.headers.each { h ->
-				  println " ${h.name} : ${h.value}"
-				}
-				println 'Response data: -----'
-				System.out << xml
-				println '\n--------------------'
-				
+				return p
 			
+			}
+			return null
 		}	
-		return null
 				
     }
 }
