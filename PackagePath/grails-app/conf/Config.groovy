@@ -105,7 +105,6 @@ oauth {
 			api = org.scribe.builder.api.YahooApi
 			key = 'dj0yJmk9THB3RVBhSUdZOWZ1JmQ9WVdrOU0ySTJkelJxTm1VbWNHbzlNVFEzTXpVek5UUTJNZy0tJnM9Y29uc3VtZXJzZWNyZXQmeD02MA--'
 			secret = '552fdbe7a5d7066ed34a4008bdcb61f9e71bd11c'
-			scope = 'https://imap.mail.yahoo.com'
 			successUri = '/dashboard/index'
 			failureUri = '/login/denied'
 			callback = "http://localhost:8080/PackagePath/oauth/yahoo/callback"
