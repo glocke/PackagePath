@@ -18,7 +18,7 @@ class USPSService {
 			'</TrackFieldRequest>';
 		
 		http.request( GET, XML  ) {
-			uri.path = '/ShippingAPITest.dll'
+			uri.path = '/ShippingAPI.dll'
 			uri.query = [API:'TrackV2', XML: xmlRequest]
 			
 			response.success = {resp, xml ->				
