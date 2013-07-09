@@ -3,11 +3,12 @@ package packagepath
 import grails.converters.JSON
 
 import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 import javax.mail.Folder
 import javax.mail.Message
 import javax.mail.MessagingException
+import javax.mail.Session
+import javax.mail.Store
 import javax.mail.search.AndTerm
 import javax.mail.search.BodyTerm
 import javax.mail.search.ComparisonTerm
@@ -21,11 +22,7 @@ import org.scribe.model.Token
 
 import uk.co.desirableobjects.oauth.scribe.OauthService
 
-import com.OAuth2Authenticator
-import com.sun.mail.gimap.GmailMessage
-import com.sun.mail.imap.IMAPSSLStore
-
-class YahooMailController implements EmailControllerInterface{
+class LiveController implements EmailControllerInterface{
 	
 	/*
 	 * Variables
@@ -48,36 +45,46 @@ class YahooMailController implements EmailControllerInterface{
 		Set<String> upsTrackingNumbers = new HashSet<String>();
 		Set<String> uspsTrackingNumbers = new HashSet<String>();
 		
-		String sessionKey = oauthService.findSessionKeyForAccessToken('yahoo')
-		Token token = session[sessionKey]
-		def guid = oauthService.getYahooResource(token, 'http://social.yahooapis.com/v1/me/guid')
-		def response = oauthService.getYahooResource(token, 'http://social.yahooapis.com/v1/user/' + guid + '/profile?format=json')
+		//String sessionKey = oauthService.findSessionKeyForAccessToken('live')
+		//Token token = session[sessionKey]
+		//def guid = oauthService.getLiveResource(token, 'http://social.yahooapis.com/v1/me/guid')
+		//def response = oauthService.getLiveResource(token, 'http://social.yahooapis.com/v1/user/' + guid + '/profile?format=json')
 		
-		JSONElement json = JSON.parse(response.getBody())
-		String email = json['email']
+		//JSONElement json = JSON.parse(response.getBody())
+		//String email = json['email']
 		
 		/*
 		 * Get the imap store
 		 */
-		OAuth2Authenticator.initialize();
-		IMAPSSLStore store = OAuth2Authenticator.connectToImap("imap.mail.yahoo.com",
-                                       143,
-                                        email,
-                                        token.getToken(),
-                                        true);
+		//OAuth2Authenticator.initialize();
+		//POP3Store store = OAuth2Authenticator.connectToPop3("pop3.live.com",
+        //                               995,
+        //                               email,
+        //                               token.getToken(),
+        //                               true);
 		
 		/*
 		 * Just doing this for local development... not sure why OAuth is not working.
 		 */
-		//String userEmail = "";
-		//String userPassword = "";
-		//Properties props = System.getProperties();
-		//props.setProperty("mail.store.protocol", "imaps");
-		//props.setProperty("mail.imaps.ssl.trust", "*");
-		//props.setProperty("mail.imaps.ssl.checkserveridentity", "false");
-		//Session session = Session.getDefaultInstance(props, null);
-		//IMAPSSLStore store = (IMAPSSLStore) session.getStore("imaps");
-		//store.connect("imap.mail.yahoo.com", userEmail, userPassword);					
+		String host = "pop3.live.com";
+		String username = "";
+		String password = "";
+		
+		Properties props = System.getProperties();
+		props.setProperty("mail.pop3.ssl.enable", "true");
+		props.setProperty("mail.pop3s.port",  "995");
+		props.setProperty("mail.debug", "true");
+		props.setProperty("mail.pop3s.socketFactory.class", "javax.net.ssl.SSLSocketFactory"); 
+		props.setProperty("mail.pop3s.socketFactory.fallback", "false"); 
+		props.setProperty("mail.pop3s.port", "995"); 
+		props.setProperty("mail.store.protocol", "gimaps");
+		props.setProperty("mail.pop3s.ssl.trust", "*");
+		props.setProperty("mail.pop3s.ssl.checkserveridentity", "false");
+		props.setProperty("mail.pop3s.socketFactory.port", "995");
+		
+		Session session = Session.getInstance(props, null);
+		Store store = session.getStore("pop3s");
+		store.connect(host, 995, username, password);
 		
         Folder folder = null;
 		try {
@@ -98,8 +105,7 @@ class YahooMailController implements EmailControllerInterface{
 				if (fd != null) {
 			   
 					System.out.println("Searching started....");
-				   
-					// Create GMail raw search term and use it to search in folder
+
 					fd.open(Folder.READ_ONLY);
 					
 					/*

@@ -103,11 +103,20 @@ oauth {
 		}
 		yahoo {
 			api = org.scribe.builder.api.YahooApi
-			key = 'dj0yJmk9THB3RVBhSUdZOWZ1JmQ9WVdrOU0ySTJkelJxTm1VbWNHbzlNVFEzTXpVek5UUTJNZy0tJnM9Y29uc3VtZXJzZWNyZXQmeD02MA--'
-			secret = '552fdbe7a5d7066ed34a4008bdcb61f9e71bd11c'
+			key = 'dj0yJmk9ckxLM1BpeDhHdzFrJmQ9WVdrOVVGWkZUR3hDTldFbWNHbzlNelE1TlRJek1UWXkmcz1jb25zdW1lcnNlY3JldCZ4PWM1'
+			secret = '6196c469886a2b71fd8c9f17c45da2b33af19994'
 			successUri = '/dashboard/index'
 			failureUri = '/login/denied'
 			callback = "http://localhost:8080/PackagePath/oauth/yahoo/callback"
+		}
+		live {
+			api = org.scribe.builder.api.LiveApi
+			key = '00000000440FBC99'
+			secret = 'xfqt7maV8rR1-sXWqnFfCFtG0bVaIBvC'
+			successUri = '/dashboard/index'
+			failureUri = '/login/denied'
+			callback = "http://localhost:8080/PackagePath/oauth/live/callback"
+			scope = 'wl.basic wl.emails'
 		}
 	}
 	

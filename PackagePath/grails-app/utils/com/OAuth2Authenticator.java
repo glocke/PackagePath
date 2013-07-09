@@ -24,6 +24,7 @@ import javax.mail.Session;
 import javax.mail.URLName;
 
 import com.sun.mail.imap.IMAPSSLStore;
+import com.sun.mail.pop3.POP3Store;
 import com.sun.mail.smtp.SMTPTransport;
 
 /**
@@ -138,5 +139,49 @@ public class OAuth2Authenticator {
 		transport.connect(host, port, userEmail, emptyPassword);
 
 		return transport;
+	}
+	
+	/**
+	 * Connects and authenticates to an POP3 server with OAuth2. You must have
+	 * called {@code initialize}.
+	 * 
+	 * @param host
+	 *            Hostname of the smtp server, for example
+	 *            {@code smtp.googlemail.com}.
+	 * @param port
+	 *            Port of the smtp server, for example 587.
+	 * @param userEmail
+	 *            Email address of the user to authenticate, for example
+	 *            {@code oauth@gmail.com}.
+	 * @param oauthToken
+	 *            The user's OAuth token.
+	 * @param debug
+	 *            Whether to enable debug logging on the connection.
+	 * 
+	 * @return An authenticated SMTPTransport that can be used for SMTP
+	 *         operations.
+	 */
+	public static POP3Store connectToPop3(String host, int port,
+			String userEmail, String oauthToken, boolean debug)
+			throws Exception {
+		Properties props = new Properties();
+		
+		props.setProperty("mail.pop3.ssl.enable", "true");
+		props.setProperty("mail.debug", "true");
+		props.setProperty("mail.pop3s.socketFactory.class", "javax.net.ssl.SSLSocketFactory"); 
+		props.setProperty("mail.pop3s.socketFactory.fallback", "false"); 
+		props.setProperty("mail.pop3s.ssl.trust", "*");
+		props.setProperty("mail.pop3s.ssl.checkserveridentity", "false");
+		
+		props.put(OAuth2SaslClientFactory.OAUTH_TOKEN_PROP, oauthToken);
+		Session session = Session.getInstance(props);
+		session.setDebug(debug);
+
+		final URLName unusedUrlName = null;
+		POP3Store store = new POP3Store(session, unusedUrlName);
+
+		final String emptyPassword = "";
+		store.connect(host, port, userEmail, emptyPassword);
+		return store;
 	}
 }

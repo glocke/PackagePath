@@ -36,6 +36,10 @@
 	     	<br>
 	     	<br>
 	     	<oauth:connect provider="yahoo">Connect to Yahoo</oauth:connect>
+	     	
+	     	<br>
+	     	<br>
+	     	<oauth:connect provider="live">Connect to Live</oauth:connect>
 	    </div>
 	</body>
 </html>
