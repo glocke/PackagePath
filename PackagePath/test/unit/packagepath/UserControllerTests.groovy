@@ -2,8 +2,11 @@ package packagepath
 
 
 
-import org.junit.*
 import grails.test.mixin.*
+
+import org.junit.*
+
+import packagepath.auth.User
 
 @TestFor(UserController)
 @Mock(User)

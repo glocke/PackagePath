@@ -2,6 +2,8 @@ package packagepath
 
 import org.springframework.dao.DataIntegrityViolationException
 
+import packagepath.auth.User
+
 class UserController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]

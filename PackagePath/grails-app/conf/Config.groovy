@@ -124,3 +124,16 @@ oauth {
 	connectTimeout = 5000
 	receiveTimeout = 5000
 }
+
+// Added by the Spring Security Core plugin:
+grails.plugins.springsecurity.userLookup.userDomainClassName = 'packagepath.auth.User'
+grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'packagepath.auth.UserRole'
+grails.plugins.springsecurity.authority.className = 'packagepath.auth.Role'
+grails.plugins.springsecurity.rememberMe.persistent = true
+grails.plugins.springsecurity.rememberMe.persistentToken.domainClassName = 'packagepath.auth.PersistentLogin'
+grails.plugins.springsecurity.openid.domainClass = 'packagepath.auth.OpenId'
+grails.plugins.springsecurity.openid.registration.roleNames = ['ROLE_USER']
+
+grails.plugins.springsecurity.controllerAnnotations.staticRules = [
+   '/dbconsole/**': ['ROLE_ADMIN']
+]

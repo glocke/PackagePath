@@ -1,4 +1,4 @@
-<%@ page import="packagepath.User" %>
+<%@ page import="packagepath.auth.User" %>
 
 
 

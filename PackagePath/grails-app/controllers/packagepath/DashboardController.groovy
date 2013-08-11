@@ -1,6 +1,7 @@
 package packagepath
 
 import grails.converters.JSON
+import grails.plugins.springsecurity.Secured
 
 class DashboardController {
 	
@@ -12,6 +13,7 @@ class DashboardController {
 	 * 
 	 * @return
 	 */
+	@Secured("ROLE_USER")
     def index() { }
 	
 	/**
@@ -19,6 +21,7 @@ class DashboardController {
 	 * 
 	 * @return
 	 */
+	@Secured("ROLE_USER")
 	def retrievePackages() {
 		
 		/*
