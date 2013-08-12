@@ -27,19 +27,9 @@
 	    </div>
 		
 	    <div class="container" style="margin-top:40px;">
-			
 			<section>
 				<h2>This is our new home page.</h2>
 	     	</section>
-	     	<oauth:connect provider="google">Connect to Google</oauth:connect>
-	     	
-	     	<br>
-	     	<br>
-	     	<oauth:connect provider="yahoo">Connect to Yahoo</oauth:connect>
-	     	
-	     	<br>
-	     	<br>
-	     	<oauth:connect provider="live">Connect to Live</oauth:connect>
 	    </div>
 	</body>
 </html>

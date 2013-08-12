@@ -3,12 +3,12 @@ class UrlMappings {
 	static mappings = {
 		
 		"/login/auth" {
-			controller = "openId"
+			controller = "login"
 			action = "auth"
 		}
 
 		"/login/openIdCreateAccount" {
-			controller = "openId"
+			controller = "login"
 			action = "createAccount"
 		}
 		
