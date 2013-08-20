@@ -9,9 +9,7 @@ class Package {
 	
 	String shippingService
 	String trackingNumber
-	String startZip	
-	String endZip
-	String currentZip
+	LinkedList<PackageLocation> locations
 	String currentPackageStatus
 	
 	Date startTransitDate
@@ -22,4 +20,11 @@ class Package {
 	
     static constraints = {
     }
+	static mapping = {
+		locations lazy: false
+	}
+	
+	Package() {
+		locations = new LinkedList<PackageLocation>()
+	}
 }

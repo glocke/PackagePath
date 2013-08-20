@@ -7,6 +7,7 @@ import groovy.util.XmlSlurper
 import java.text.SimpleDateFormat
 
 class UPSService {
+	private final String API_DELIVERED_FLAG = "D"
 	
     Package getTrackingInfo(String trackingNumber) {
 		def http = new HTTPBuilder('https://www.ups.com/ups.app/xml/Track')
@@ -34,17 +35,37 @@ class UPSService {
 			response.success = { resp, xml ->
 				
 				Package p = new Package()
-				p.shippingService = "ups"
+				p.shippingService = ShippingProviderType.UPS
 				p.trackingNumber = xml?.Shipment?.Package?.TrackingNumber?.text()
-				p.startZip = xml?.Shipment?.Shipper?.Address?.PostalCode?.text()
-				p.currentZip = xml?.Shipment?.Package?.Activity?.ActivityLocation?.Address?.PostalCode?.text()
-				p.currentPackageStatus = xml?.Shipment?.Package?.Activity?.Status?.StatusType?.Code?.text()
-				p.endZip = xml?.Shipment?.ShipTo?.Address?.PostalCode?.text()
-				p.inTransit = true
-				if ("D".equals(p.currentPackageStatus)) {
-					p.endZip = p.currentZip
-					p.inTransit = false
+				
+				String tmpStartZip = xml?.Shipment?.Shipper?.Address?.PostalCode?.text()
+				if (tmpStartZip != null && !tmpStartZip.isEmpty()) {
+					PackageLocation startLoc = new PackageLocation()
+					startLoc.zipType = ZipType.START
+					startLoc.zip = tmpStartZip
+					p.locations.add(startLoc)
 				}
+				String tmpCurrentZip = xml?.Shipment?.Package?.Activity?.ActivityLocation?.Address?.PostalCode?.text()
+				if (tmpCurrentZip != null && !tmpCurrentZip.isEmpty()) {
+					PackageLocation currentLoc = new PackageLocation()
+					currentLoc.zipType = ZipType.CURRENT
+					currentLoc.zip = tmpCurrentZip
+					p.locations.add(currentLoc)
+				}
+				String tmpEndZip = xml?.Shipment?.ShipTo?.Address?.PostalCode?.text()
+				p.currentPackageStatus = xml?.Shipment?.Package?.Activity?.Status?.StatusType?.Code?.text()
+				p.inTransit = true
+				if (API_DELIVERED_FLAG.equals(p.currentPackageStatus) && tmpCurrentZip != null  && !tmpCurrentZip.isEmpty()) {
+					PackageLocation currentLoc = new PackageLocation()
+					currentLoc.zipType = ZipType.END
+					currentLoc.zip = tmpCurrentZip
+					p.locations.add(currentLoc)
+				} else if (tmpEndZip != null && !tmpEndZip.isEmpty()) {
+					PackageLocation endLoc = new PackageLocation()
+					endLoc.zipType = ZipType.END
+					endLoc.zip = tmpEndZip
+					p.locations.add(endLoc)
+				}							
 				
 				SimpleDateFormat upsDf = new SimpleDateFormat("yyyyMMdd");
 				String strDate = null;
