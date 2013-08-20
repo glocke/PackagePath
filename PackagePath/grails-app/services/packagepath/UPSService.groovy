@@ -36,7 +36,7 @@ class UPSService {
 				
 				Package p = new Package()
 				p.shippingService = ShippingProviderType.UPS
-				p.trackingNumber = xml?.Shipment?.Package?.TrackingNumber?.text()
+				p.trackingNumber = trackingNumber
 				
 				String tmpStartZip = xml?.Shipment?.Shipper?.Address?.PostalCode?.text()
 				if (tmpStartZip != null && !tmpStartZip.isEmpty()) {
