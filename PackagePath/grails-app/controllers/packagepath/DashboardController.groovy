@@ -13,7 +13,7 @@ class DashboardController {
 	 * 
 	 * @return
 	 */
-	@Secured("ROLE_USER")
+	@Secured("IS_AUTHENTICATED_REMEMBERED")
     def index() { }
 	
 	/**
@@ -21,7 +21,7 @@ class DashboardController {
 	 * 
 	 * @return
 	 */
-	@Secured("ROLE_USER")
+	@Secured("IS_AUTHENTICATED_REMEMBERED")
 	def retrievePackages() {
 		
 		/*
