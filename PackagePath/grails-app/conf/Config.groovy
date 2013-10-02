@@ -99,7 +99,7 @@ oauth {
 			scope = 'https://mail.google.com/ https://www.googleapis.com/auth/userinfo.email'
 			successUri = '/dashboard/index'
 			failureUri = '/login/denied'
-			callback = "http://localhost:8080/PackagePath/oauth/google/callback"
+			callback = "https://localhost:8443/PackagePath/oauth/google/callback"
 		}
 		yahoo {
 			api = org.scribe.builder.api.YahooApi
@@ -107,7 +107,7 @@ oauth {
 			secret = '6196c469886a2b71fd8c9f17c45da2b33af19994'
 			successUri = '/dashboard/index'
 			failureUri = '/login/denied'
-			callback = "http://localhost:8080/PackagePath/oauth/yahoo/callback"
+			callback = "https://localhost:8443/PackagePath/oauth/yahoo/callback"
 		}
 		live {
 			api = org.scribe.builder.api.LiveApi
@@ -115,7 +115,7 @@ oauth {
 			secret = 'xfqt7maV8rR1-sXWqnFfCFtG0bVaIBvC'
 			successUri = '/dashboard/index'
 			failureUri = '/login/denied'
-			callback = "http://localhost:8080/PackagePath/oauth/live/callback"
+			callback = "https://localhost:8443/PackagePath/oauth/live/callback"
 			scope = 'wl.basic wl.emails'
 		}
 	}
