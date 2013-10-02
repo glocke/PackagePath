@@ -23,10 +23,9 @@ class PackageController {
 		
 		packageList.add(p)
 		
-		// for testing purposes
-		System.out.println(p.toString())
-		
-		render packageList as JSON
+		JSON.use("deep") {
+			render packageList as JSON
+		}
 	}
 	
     def index() {

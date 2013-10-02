@@ -70,81 +70,18 @@ class SpringSecurityOAuthController {
         if (oAuthToken.principal instanceof GrailsUser) {
             authenticateAndRedirect(oAuthToken, defaultTargetUrl)
         } else {
-        	/*
-        	 * We know the user has successfully logged into our app via open auth, so we can just try to create the user
-        	 */
-			boolean created = User.withTransaction { status ->
-			
-				if(saveOrUpdateUser(oAuthToken)){
-					return true;
-				}
-	
-				status.setRollbackOnly()
-				return false
-			}
-			
-			/*
-			 * If we have created the user, then redirect
-			 */
-			if (created) {
-				authenticateAndRedirect(oAuthToken, defaultTargetUrl)
-				return
-			}
-		
-		
-			// This OAuth account hasn't been registered against an internal
+            // This OAuth account hasn't been registered against an internal
             // account yet. Give the oAuthID the opportunity to create a new
             // internal account or link to an existing one.
             session[SPRING_SECURITY_OAUTH_TOKEN] = oAuthToken
 
-            renderError 500, "We didn't create a user!"
-            return
+            def redirectUrl = SpringSecurityUtils.securityConfig.oauth.registration.askToLinkOrCreateAccountUri
+            assert redirectUrl, "grails.plugins.springsecurity.oauth.registration.askToLinkOrCreateAccountUri" +
+                    " configuration option must be set!"
+            log.debug "Redirecting to askToLinkOrCreateAccountUri: ${redirectUrl}"
+            redirect(redirectUrl instanceof Map ? redirectUrl : [uri: redirectUrl])
         }
     }
-	
-	/**
-	 * Custom method, we don't need to link users, we are just going to save them as they sign in
-	 * 
-	 * @param oAuthToken
-	 * @return
-	 */
-	protected boolean saveOrUpdateUser(OAuthToken oAuthToken){
-		/*
-		 * Does the user already exist?
-		 */
-		User user = User.findByUsername(oAuthToken.principal)
-		if (user) {
-			user.addToOauthIds(provider: oAuthToken.providerName, accessToken: oAuthToken.socialId, user: user)
-			if (user.validate() && user.save()) {
-				oAuthToken = updateOAuthToken(oAuthToken, user)
-				return true
-			}
-		} else {
-			/*
-			 * The user needs to be created
-			 */
-			if (!springSecurityService.loggedIn) {
-				def config = SpringSecurityUtils.securityConfig
-				
-				user = new User(oAuthToken.email, true)
-				user.addToOauthIds(provider: oAuthToken.providerName, accessToken: oAuthToken.socialId, user: user)
-
-				// updateUser(user, oAuthToken)
-
-				if (!user.validate() || !user.save()) {
-					return false
-				}
-
-				for (roleName in config.oauth.registration.roleNames) {
-					UserRole.create user, Role.findByAuthority(roleName)
-				}
-
-				oAuthToken = updateOAuthToken(oAuthToken, user)
-				return true
-			}
-		}
-		return false
-	}
 
     def onFailure() {
         authenticateAndRedirect(null, defaultTargetUrl)
@@ -262,9 +199,16 @@ class SpringSecurityOAuthController {
         String usernamePropertyName = conf.userLookup.usernamePropertyName
         String passwordPropertyName = conf.userLookup.passwordPropertyName
         String enabledPropertyName = conf.userLookup.enabledPropertyName
+        String accountExpiredPropertyName = conf.userLookup.accountExpiredPropertyName
+        String accountLockedPropertyName = conf.userLookup.accountLockedPropertyName
+        String passwordExpiredPropertyName = conf.userLookup.passwordExpiredPropertyName
 
         String username = user."${usernamePropertyName}"
+        String password = user."${passwordPropertyName}"
         boolean enabled = enabledPropertyName ? user."${enabledPropertyName}" : true
+        boolean accountExpired = accountExpiredPropertyName ? user."${accountExpiredPropertyName}" : false
+        boolean accountLocked = accountLockedPropertyName ? user."${accountLockedPropertyName}" : false
+        boolean passwordExpired = passwordExpiredPropertyName ? user."${passwordExpiredPropertyName}" : false
 
         // authorities
 
@@ -273,8 +217,8 @@ class SpringSecurityOAuthController {
         Collection<?> userAuthorities = user."${authoritiesPropertyName}"
         def authorities = userAuthorities.collect { new GrantedAuthorityImpl(it."${authorityPropertyName}") }
 
-        oAuthToken.principal = new GrailsUser(username, "", enabled, true, true,
-                true, authorities ?: GormUserDetailsService.NO_ROLES, user.id)
+        oAuthToken.principal = new GrailsUser(username, password, enabled, !accountExpired, !passwordExpired,
+                !accountLocked, authorities ?: GormUserDetailsService.NO_ROLES, user.id)
         oAuthToken.authorities = authorities
         oAuthToken.authenticated = true
 
