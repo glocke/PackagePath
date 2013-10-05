@@ -62,10 +62,11 @@ grails.hibernate.cache.queries = false
 environments {
     development {
         grails.logging.jul.usebridge = true
+		grails.serverURL = "http://localhost:8080"
     }
     production {
         grails.logging.jul.usebridge = false
-        // TODO: grails.serverURL = "http://www.changeme.com"
+        grails.serverURL = "http://www.packagepath.com"
     }
 }
 
@@ -97,25 +98,25 @@ oauth {
 			key = '804049061572.apps.googleusercontent.com'
 			secret = 'KhnpQl-KDr6Wnq3AENDpIa-f'
 			scope = 'https://mail.google.com/ https://www.googleapis.com/auth/userinfo.email'
-			successUri = '/dashboard/index'
-			failureUri = '/login/denied'
-			callback = "https://localhost:8443/PackagePath/oauth/google/callback"
+			successUri = '/PackagePath/oauth/success?provider=google'
+			failureUri = '/PackagePath/oauth/failure'
+			callback = "${grails.serverURL}/PackagePath/oauth/google/callback"
 		}
 		yahoo {
 			api = org.scribe.builder.api.YahooApi
 			key = 'dj0yJmk9ckxLM1BpeDhHdzFrJmQ9WVdrOVVGWkZUR3hDTldFbWNHbzlNelE1TlRJek1UWXkmcz1jb25zdW1lcnNlY3JldCZ4PWM1'
 			secret = '6196c469886a2b71fd8c9f17c45da2b33af19994'
-			successUri = '/dashboard/index'
-			failureUri = '/login/denied'
-			callback = "https://localhost:8443/PackagePath/oauth/yahoo/callback"
+			successUri = '/PackagePath/oauth/success?provider=yahoo'
+			failureUri = '/PackagePath/oauth/failure'
+			callback = "${grails.serverURL}/PackagePath/oauth/yahoo/callback"
 		}
 		live {
 			api = org.scribe.builder.api.LiveApi
 			key = '00000000440FBC99'
 			secret = 'xfqt7maV8rR1-sXWqnFfCFtG0bVaIBvC'
-			successUri = '/dashboard/index'
-			failureUri = '/login/denied'
-			callback = "https://localhost:8443/PackagePath/oauth/live/callback"
+			successUri = '/PackagePath/oauth/success?provider=live'
+			failureUri = '/PackagePath/oauth/failure'
+			callback = "${grails.serverURL}/PackagePath/oauth/live/callback"
 			scope = 'wl.basic wl.emails'
 		}
 	}
